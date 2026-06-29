@@ -1,0 +1,4698 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="ToiypAll — Алматыдағы отбасылық халал мейрамхана. Онлайн тапсырыс, жеткізу, өзімен алу."/>
+<meta name="theme-color" content="#0f2318"/>
+<title>ToiypAll — Отбасылық Халал Мейрамхана</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KZ:wght@400;700&display=swap" rel="stylesheet"/>
+
+<style>
+/* ================================================================
+   DESIGN TOKENS
+   ================================================================ */
+:root {
+  /* Palette — deep forest meets warm spice */
+  --ink:         #0f1a12;
+  --ink-deep:    #080f0b;
+  --forest:      #1b3d24;
+  --forest-mid:  #2a5c38;
+  --forest-lite: #3d7a4f;
+  --sage:        #7aaa88;
+  --sage-light:  #d0e8d8;
+  --cream:       #f8f4ee;
+  --parchment:   #ede8df;
+  --spice:       #c17b2a;
+  --spice-warm:  #e8963a;
+  --spice-pale:  #fdf3e4;
+  --white:       #ffffff;
+  --muted:       #8a9490;
+  --muted-dark:  #4a5a50;
+
+  /* Semantic */
+  --bg:          var(--cream);
+  --surface:     var(--white);
+  --border:      #ddd8cf;
+  --text:        var(--ink);
+  --text-sub:    var(--muted-dark);
+  --accent:      var(--spice);
+  --accent-warm: var(--spice-warm);
+  --primary:     var(--forest);
+  --primary-mid: var(--forest-mid);
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', 'Noto Serif KZ', Georgia, serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+
+  /* Spacing */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  28px;
+  --space-xl:  48px;
+  --space-2xl: 80px;
+  --space-3xl: 120px;
+
+  /* Radius */
+  --r-sm:  6px;
+  --r-md:  12px;
+  --r-lg:  20px;
+  --r-xl:  32px;
+  --r-pill: 999px;
+
+  /* Shadow */
+  --sh-sm:  0 1px 4px rgba(0,0,0,.07), 0 2px 12px rgba(0,0,0,.05);
+  --sh-md:  0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.09);
+  --sh-lg:  0 8px 24px rgba(0,0,0,.10), 0 24px 64px rgba(0,0,0,.12);
+  --sh-glow: 0 0 0 4px rgba(193,123,42,.18);
+
+  /* Transitions */
+  --ease:   cubic-bezier(.4,0,.2,1);
+  --dur-sm: 150ms;
+  --dur-md: 260ms;
+  --dur-lg: 400ms;
+
+  /* Layout */
+  --max-w: 1200px;
+  --nav-h: 72px;
+}
+
+/* ================================================================
+   RESET & BASE
+   ================================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--dur-sm) var(--ease);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  line-height: 1;
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+}
+
+ul, ol { list-style: none; }
+
+/* ================================================================
+   SCROLLBAR
+   ================================================================ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--parchment); }
+::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--forest-mid); }
+
+/* ================================================================
+   UTILITIES
+   ================================================================ */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: var(--space-2xl) 0;
+}
+
+.section-sm {
+  padding: var(--space-xl) 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+
+/* ================================================================
+   TYPOGRAPHY SCALE
+   ================================================================ */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.eyebrow--light {
+  color: rgba(255,255,255,.6);
+}
+
+.display-1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -.01em;
+}
+
+.display-2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -.01em;
+}
+
+.heading-1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.heading-2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.lead {
+  font-size: 1.1rem;
+  color: var(--text-sub);
+  line-height: 1.75;
+  max-width: 580px;
+}
+
+.lead--center { margin: 0 auto; text-align: center; }
+
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: .9rem;
+  font-weight: 600;
+  border-radius: var(--r-pill);
+  padding: 13px 28px;
+  transition: all var(--dur-md) var(--ease);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(193,123,42,.35);
+}
+
+.btn-primary:hover {
+  background: var(--spice-warm);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(193,123,42,.42);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,.45);
+}
+
+.btn-ghost:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.8);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--forest);
+  border: 1.5px solid var(--forest);
+}
+
+.btn-outline:hover {
+  background: var(--forest);
+  color: var(--white);
+}
+
+.btn-green {
+  background: var(--forest);
+  color: var(--white);
+  box-shadow: 0 4px 16px rgba(27,61,36,.3);
+}
+
+.btn-green:hover {
+  background: var(--forest-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(27,61,36,.38);
+}
+
+.btn-sm {
+  padding: 9px 18px;
+  font-size: .82rem;
+}
+
+.btn-lg {
+  padding: 16px 36px;
+  font-size: 1rem;
+}
+
+.btn-icon {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   BADGE / TAG
+   ================================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: var(--r-pill);
+}
+
+.badge-halal {
+  background: rgba(27,61,36,.12);
+  color: var(--forest);
+  border: 1px solid rgba(27,61,36,.2);
+}
+
+.badge-halal--light {
+  background: rgba(255,255,255,.15);
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,.3);
+}
+
+.badge-open {
+  background: #e8f7ee;
+  color: #1a6b3c;
+}
+
+.badge-closed {
+  background: #fde8e8;
+  color: #b83232;
+}
+
+/* ================================================================
+   NAVBAR
+   ================================================================ */
+#navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 900;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  transition:
+    background var(--dur-lg) var(--ease),
+    box-shadow var(--dur-lg) var(--ease);
+}
+
+#navbar.scrolled {
+  background: rgba(15,26,18,.97);
+  box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 8px 32px rgba(0,0,0,.35);
+  backdrop-filter: blur(20px);
+}
+
+.nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Logo */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.nav-logo-mark {
+  width: 42px; height: 42px;
+  background: var(--accent);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-logo-mark svg {
+  width: 26px;
+  height: 26px;
+  color: var(--white);
+}
+
+.nav-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.nav-logo-main {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: .01em;
+}
+
+.nav-logo-sub {
+  font-size: .65rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+/* Nav links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nav-link {
+  font-size: .88rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.75);
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  transition: color var(--dur-sm), background var(--dur-sm);
+}
+
+.nav-link:hover {
+  color: var(--white);
+  background: rgba(255,255,255,.1);
+}
+
+/* Nav right */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Lang switcher */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,.1);
+  border-radius: var(--r-pill);
+  padding: 3px;
+  gap: 2px;
+}
+
+.lang-btn {
+  font-size: .78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.6);
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  transition: all var(--dur-sm) var(--ease);
+  letter-spacing: .04em;
+}
+
+.lang-btn.active {
+  background: var(--accent);
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(193,123,42,.4);
+}
+
+/* Cart button in nav */
+.nav-cart-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--accent);
+  color: var(--white);
+  padding: 9px 18px;
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  font-size: .88rem;
+  transition: all var(--dur-md) var(--ease);
+  position: relative;
+}
+
+.nav-cart-btn:hover {
+  background: var(--spice-warm);
+  transform: translateY(-1px);
+}
+
+.nav-cart-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+#cartCount {
+  background: var(--white);
+  color: var(--forest);
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .72rem;
+  font-weight: 800;
+  padding: 0 4px;
+}
+
+/* Burger */
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  border-radius: var(--r-sm);
+  transition: background var(--dur-sm);
+}
+
+.burger:hover { background: rgba(255,255,255,.1); }
+
+.burger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: all var(--dur-md) var(--ease);
+  transform-origin: center;
+}
+
+.burger.open .burger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.burger.open .burger-line:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.burger.open .burger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile nav drawer */
+#mobileNav {
+  position: fixed;
+  top: var(--nav-h);
+  left: 0; right: 0;
+  background: rgba(8,15,11,.97);
+  backdrop-filter: blur(20px);
+  z-index: 890;
+  padding: 20px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  transform: translateY(-110%);
+  transition: transform var(--dur-lg) var(--ease);
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+
+#mobileNav.open {
+  transform: translateY(0);
+}
+
+.mobile-link {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.8);
+  padding: 13px 16px;
+  border-radius: var(--r-md);
+  transition: all var(--dur-sm);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.mobile-link:hover {
+  background: rgba(255,255,255,.08);
+  color: var(--white);
+}
+
+.mobile-nav-bottom {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+/* ================================================================
+   HERO
+   ================================================================ */
+#hero {
+  min-height: 100vh;
+  background: var(--ink-deep);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: calc(var(--nav-h) + 40px) 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hero background pattern — arabesque-inspired geometric */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-bg-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 100%, rgba(27,61,36,.85) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 30% 20%, rgba(193,123,42,.12) 0%, transparent 60%),
+    linear-gradient(180deg, #080f0b 0%, #0f1a12 40%, #1b2e1e 100%);
+}
+
+/* Geometric ornament lines */
+.hero-bg-lines {
+  position: absolute;
+  inset: 0;
+  opacity: .07;
+  background-image:
+    linear-gradient(60deg, rgba(193,123,42,1) 1px, transparent 1px),
+    linear-gradient(-60deg, rgba(193,123,42,1) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(122,170,136,1) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px, 80px 80px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.hero-halal {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.hero-halal-dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.hero-halal-text {
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
+}
+
+/* Logo in hero */
+.hero-logo-wrap {
+  margin: 0 auto 32px;
+  position: relative;
+  display: inline-block;
+}
+
+.hero-logo-ring {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  border: 2px solid rgba(193,123,42,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero-logo-ring::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(193,123,42,.15);
+}
+
+.hero-logo-img {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(193,123,42,.6);
+}
+
+.hero-logo-placeholder {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: var(--forest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -.02em;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 9vw, 6.5rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: .95;
+  letter-spacing: -.02em;
+  margin-bottom: 6px;
+}
+
+.hero-title-sub {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 3vw, 1.6rem);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--accent);
+  letter-spacing: .02em;
+  margin-bottom: 22px;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,.6);
+  line-height: 1.75;
+  max-width: 480px;
+  margin: 0 auto 40px;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Hero divider — elegant rule */
+.hero-divider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.hero-divider svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Floating ornament numbers */
+.hero-metrics {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  position: relative;
+}
+
+.hero-metric {
+  padding: 0 40px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-metric + .hero-metric::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 1px;
+  background: rgba(255,255,255,.1);
+}
+
+.metric-num {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+  display: block;
+}
+
+.metric-label {
+  font-size: .73rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  margin-top: 5px;
+}
+
+/* ================================================================
+   ANNOUNCEMENT STRIP
+   ================================================================ */
+#announcement {
+  background: var(--forest);
+  padding: 14px 24px;
+  overflow: hidden;
+}
+
+.announcement-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.announce-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--white);
+}
+
+.announce-icon {
+  width: 20px; height: 20px;
+  flex-shrink: 0;
+  opacity: .8;
+}
+
+.announce-text {
+  font-size: .84rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.85);
+}
+
+.announce-text strong {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.announce-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255,255,255,.2);
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   MENU SECTION
+   ================================================================ */
+#menu {
+  background: var(--cream);
+}
+
+.menu-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.menu-header .heading-1 {
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+/* Category tabs */
+.cat-scroll-wrap {
+  overflow-x: auto;
+  margin-bottom: var(--space-lg);
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.cat-scroll-wrap::-webkit-scrollbar { display: none; }
+
+.cat-tabs {
+  display: inline-flex;
+  gap: 8px;
+  padding: 4px;
+  background: var(--parchment);
+  border-radius: var(--r-pill);
+  min-width: max-content;
+}
+
+.cat-tab {
+  padding: 9px 20px;
+  border-radius: var(--r-pill);
+  font-size: .84rem;
+  font-weight: 600;
+  color: var(--muted-dark);
+  background: transparent;
+  transition: all var(--dur-md) var(--ease);
+  white-space: nowrap;
+  letter-spacing: .01em;
+}
+
+.cat-tab:hover {
+  color: var(--forest);
+  background: rgba(27,61,36,.08);
+}
+
+.cat-tab.active {
+  background: var(--forest);
+  color: var(--white);
+  box-shadow: var(--sh-sm);
+}
+
+/* Menu grid */
+#menuGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Menu card */
+.menu-card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform var(--dur-md) var(--ease), box-shadow var(--dur-md) var(--ease);
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sh-md);
+  border-color: var(--sage-light);
+}
+
+.card-media {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  background: var(--parchment);
+  flex-shrink: 0;
+}
+
+.card-media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .5s var(--ease);
+}
+
+.menu-card:hover .card-media img {
+  transform: scale(1.06);
+}
+
+.card-media-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--parchment) 0%, var(--sage-light) 100%);
+}
+
+.card-media-placeholder svg {
+  width: 48px; height: 48px;
+  color: var(--sage);
+  opacity: .6;
+}
+
+.card-halal-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--forest);
+  color: var(--white);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: var(--r-pill);
+}
+
+.card-body {
+  padding: 18px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-name {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 5px;
+}
+
+.card-desc {
+  font-size: .8rem;
+  color: var(--muted-dark);
+  line-height: 1.5;
+  margin-bottom: 10px;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--parchment);
+}
+
+.card-price {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--forest);
+  letter-spacing: -.01em;
+}
+
+/* Add to cart controls */
+.card-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--forest);
+  color: var(--white);
+  padding: 8px 16px;
+  border-radius: var(--r-pill);
+  font-size: .82rem;
+  font-weight: 600;
+  transition: all var(--dur-sm) var(--ease);
+  flex-shrink: 0;
+}
+
+.card-add-btn:hover {
+  background: var(--forest-mid);
+  transform: scale(1.04);
+}
+
+.card-add-btn svg {
+  width: 14px; height: 14px;
+}
+
+/* Quantity control */
+.card-qty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--sage-light);
+  border-radius: var(--r-pill);
+  padding: 5px 5px;
+}
+
+.qty-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--forest);
+  color: var(--white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--dur-sm);
+  flex-shrink: 0;
+}
+
+.qty-btn:hover { background: var(--forest-mid); }
+
+.qty-num {
+  min-width: 24px;
+  text-align: center;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--forest);
+}
+
+/* ================================================================
+   ABOUT SECTION
+   ================================================================ */
+#about {
+  background: var(--white);
+}
+
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: center;
+}
+
+.about-visual {
+  position: relative;
+}
+
+.about-img-frame {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  aspect-ratio: 4/5;
+  background: var(--parchment);
+}
+
+.about-img-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.about-img-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--parchment) 0%, var(--sage-light) 60%, var(--cream) 100%);
+}
+
+.about-img-placeholder svg {
+  width: 80px; height: 80px;
+  color: var(--sage);
+  opacity: .5;
+}
+
+/* Floating info card */
+.about-float-card {
+  position: absolute;
+  bottom: -24px;
+  right: -24px;
+  background: var(--forest);
+  color: var(--white);
+  padding: 22px 28px;
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg);
+  text-align: center;
+  min-width: 150px;
+}
+
+.about-float-num {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--spice-warm);
+}
+
+.about-float-label {
+  font-size: .78rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.7);
+  margin-top: 4px;
+  letter-spacing: .04em;
+}
+
+.about-content .heading-1 {
+  margin-bottom: 18px;
+  color: var(--ink);
+}
+
+.about-content .lead {
+  margin-bottom: 36px;
+}
+
+/* Features list */
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.feature-icon-wrap {
+  width: 48px; height: 48px;
+  border-radius: var(--r-md);
+  background: var(--spice-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-icon-wrap svg {
+  width: 22px; height: 22px;
+  color: var(--accent);
+}
+
+.feature-icon-wrap.green-bg {
+  background: var(--sage-light);
+}
+
+.feature-icon-wrap.green-bg svg {
+  color: var(--forest);
+}
+
+.feature-title {
+  font-weight: 600;
+  font-size: .95rem;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+
+.feature-desc {
+  font-size: .85rem;
+  color: var(--muted-dark);
+  line-height: 1.55;
+}
+
+/* ================================================================
+   BRANCHES SECTION
+   ================================================================ */
+#branches {
+  background: var(--ink-deep);
+  position: relative;
+  overflow: hidden;
+}
+
+.branches-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(27,61,36,.5) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(193,123,42,.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.branches-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+  position: relative;
+  z-index: 2;
+}
+
+.branches-header .heading-1 {
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.branches-header .lead {
+  color: rgba(255,255,255,.55);
+  margin: 0 auto;
+}
+
+#branchesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 22px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Branch card */
+.branch-card {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  backdrop-filter: blur(8px);
+  transition: background var(--dur-md), border-color var(--dur-md), transform var(--dur-md);
+}
+
+.branch-card:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(193,123,42,.35);
+  transform: translateY(-3px);
+}
+
+.branch-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.branch-number {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+
+.branch-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.2;
+}
+
+/* Branch info rows */
+.branch-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.branch-info-icon {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.08);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.branch-info-icon svg {
+  width: 16px; height: 16px;
+  color: var(--sage);
+}
+
+.branch-info-text {
+  flex: 1;
+}
+
+.branch-info-label {
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.35);
+  margin-bottom: 2px;
+}
+
+.branch-info-val {
+  font-size: .9rem;
+  color: rgba(255,255,255,.8);
+  line-height: 1.4;
+}
+
+.branch-info-val a {
+  color: var(--sage);
+  transition: color var(--dur-sm);
+}
+
+.branch-info-val a:hover {
+  color: var(--white);
+}
+
+/* Branch hours table */
+.branch-hours-table {
+  width: 100%;
+  font-size: .82rem;
+}
+
+.hours-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.hours-row:last-child { border-bottom: none; }
+
+.hours-day { color: rgba(255,255,255,.5); }
+.hours-time { color: rgba(255,255,255,.8); font-weight: 500; }
+
+/* Branch action buttons */
+.branch-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.branch-btn {
+  flex: 1;
+  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  font-size: .82rem;
+  font-weight: 600;
+  transition: all var(--dur-sm) var(--ease);
+}
+
+.branch-btn svg {
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+}
+
+.branch-btn-2gis {
+  background: rgba(27,61,36,.5);
+  color: var(--sage);
+  border: 1px solid rgba(27,61,36,.7);
+}
+
+.branch-btn-2gis:hover {
+  background: var(--forest);
+  color: var(--white);
+  border-color: var(--forest);
+}
+
+.branch-btn-wa {
+  background: rgba(37,211,102,.12);
+  color: #4cd483;
+  border: 1px solid rgba(37,211,102,.25);
+}
+
+.branch-btn-wa:hover {
+  background: #25d366;
+  color: var(--white);
+  border-color: #25d366;
+}
+
+.branch-btn-phone {
+  background: rgba(193,123,42,.12);
+  color: var(--spice-warm);
+  border: 1px solid rgba(193,123,42,.2);
+}
+
+.branch-btn-phone:hover {
+  background: var(--accent);
+  color: var(--white);
+  border-color: var(--accent);
+}
+
+/* ================================================================
+   MAP SECTION
+   ================================================================ */
+#mapSection {
+  background: var(--white);
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+  align-items: stretch;
+}
+
+.map-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.map-sidebar .heading-1 {
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.map-address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.map-address-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--cream);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--dur-sm) var(--ease);
+}
+
+.map-address-item:hover,
+.map-address-item.active {
+  background: var(--sage-light);
+  border-color: var(--sage);
+}
+
+.map-address-num {
+  width: 28px; height: 28px;
+  background: var(--forest);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.map-address-text {
+  font-size: .88rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.map-open-2gis {
+  margin-top: auto;
+}
+
+.map-embed {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--sh-sm);
+  min-height: 420px;
+}
+
+.map-embed iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  border: none;
+  display: block;
+}
+
+/* ================================================================
+   PAYMENT SECTION
+   ================================================================ */
+#payment {
+  background: var(--forest);
+  position: relative;
+  overflow: hidden;
+}
+
+.payment-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(193,123,42,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.payment-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.payment-text .heading-1 {
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+.payment-text .lead {
+  color: rgba(255,255,255,.65);
+  margin-bottom: 28px;
+}
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.payment-card {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--r-md);
+  padding: 20px 18px;
+  transition: background var(--dur-md), border-color var(--dur-md);
+}
+
+.payment-card:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(193,123,42,.4);
+}
+
+.payment-icon-wrap {
+  width: 40px; height: 40px;
+  background: rgba(193,123,42,.2);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.payment-icon-wrap svg {
+  width: 20px; height: 20px;
+  color: var(--spice-warm);
+}
+
+.payment-name {
+  font-weight: 600;
+  font-size: .92rem;
+  color: var(--white);
+  margin-bottom: 3px;
+}
+
+.payment-desc {
+  font-size: .78rem;
+  color: rgba(255,255,255,.5);
+}
+
+/* ================================================================
+   CONTACTS SECTION
+   ================================================================ */
+#contacts {
+  background: var(--cream);
+}
+
+.contacts-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.contacts-info .heading-1 {
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.contacts-info .lead {
+  margin-bottom: 36px;
+}
+
+.contact-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  transition: all var(--dur-sm) var(--ease);
+}
+
+.contact-card:hover {
+  border-color: var(--sage);
+  box-shadow: var(--sh-sm);
+}
+
+.contact-icon {
+  width: 46px; height: 46px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-icon.green { background: var(--sage-light); }
+.contact-icon.green svg { color: var(--forest); }
+.contact-icon.gold { background: var(--spice-pale); }
+.contact-icon.gold svg { color: var(--accent); }
+.contact-icon.wa { background: rgba(37,211,102,.12); }
+.contact-icon.wa svg { color: #25d366; }
+
+.contact-icon svg {
+  width: 20px; height: 20px;
+}
+
+.contact-content {
+  flex: 1;
+}
+
+.contact-label {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.contact-value {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--ink);
+  display: block;
+}
+
+.contact-value + .contact-value {
+  margin-top: 2px;
+}
+
+.contact-value a {
+  color: var(--forest);
+  transition: color var(--dur-sm);
+}
+
+.contact-value a:hover { color: var(--forest-mid); }
+
+/* Social links */
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: var(--r-lg);
+  font-weight: 600;
+  font-size: .92rem;
+  border: 1.5px solid transparent;
+  transition: all var(--dur-md) var(--ease);
+}
+
+.social-link svg {
+  width: 22px; height: 22px;
+  flex-shrink: 0;
+}
+
+.social-link.instagram {
+  background: linear-gradient(135deg, rgba(225,48,108,.08), rgba(193,53,132,.05));
+  color: #c13584;
+  border-color: rgba(193,53,132,.2);
+}
+
+.social-link.instagram:hover {
+  background: linear-gradient(135deg, rgba(225,48,108,.15), rgba(193,53,132,.12));
+  border-color: rgba(193,53,132,.5);
+}
+
+.social-link.whatsapp {
+  background: rgba(37,211,102,.08);
+  color: #1ebe5d;
+  border-color: rgba(37,211,102,.2);
+}
+
+.social-link.whatsapp:hover {
+  background: rgba(37,211,102,.15);
+  border-color: rgba(37,211,102,.5);
+}
+
+.social-link.phone {
+  background: rgba(27,61,36,.07);
+  color: var(--forest);
+  border-color: rgba(27,61,36,.15);
+}
+
+.social-link.phone:hover {
+  background: var(--forest);
+  color: var(--white);
+  border-color: var(--forest);
+}
+
+/* ================================================================
+   FOOTER
+   ================================================================ */
+#footer {
+  background: var(--ink-deep);
+  padding: 56px 0 24px;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-brand {}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.footer-logo-mark {
+  width: 38px; height: 38px;
+  background: var(--accent);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-logo-mark svg {
+  width: 22px; height: 22px;
+  color: var(--white);
+}
+
+.footer-logo-name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.footer-tagline {
+  font-size: .85rem;
+  color: rgba(255,255,255,.4);
+  line-height: 1.65;
+  max-width: 240px;
+  margin-bottom: 20px;
+}
+
+.footer-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.footer-badge {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.45);
+}
+
+.footer-col-title {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-link {
+  font-size: .87rem;
+  color: rgba(255,255,255,.5);
+  transition: color var(--dur-sm);
+}
+
+.footer-link:hover { color: var(--white); }
+
+.footer-contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+
+.footer-contact-label {
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+}
+
+.footer-contact-val {
+  font-size: .87rem;
+  color: rgba(255,255,255,.6);
+  transition: color var(--dur-sm);
+}
+
+.footer-contact-val:hover { color: var(--white); }
+
+/* Footer bottom bar */
+.footer-bottom {
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-copy {
+  font-size: .78rem;
+  color: rgba(255,255,255,.25);
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-bottom-link {
+  font-size: .78rem;
+  color: rgba(255,255,255,.25);
+  transition: color var(--dur-sm);
+}
+
+.footer-bottom-link:hover { color: rgba(255,255,255,.5); }
+
+/* ================================================================
+   CART SIDEBAR
+   ================================================================ */
+#cartOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 1800;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-md) var(--ease);
+}
+
+#cartOverlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#cartSidebar {
+  position: fixed;
+  top: 0; right: 0;
+  width: min(420px, 100vw);
+  height: 100dvh;
+  background: var(--white);
+  z-index: 1900;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 60px rgba(0,0,0,.22);
+  transform: translateX(100%);
+  transition: transform var(--dur-lg) var(--ease);
+}
+
+#cartSidebar.open { transform: translateX(0); }
+
+.cart-header {
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--white);
+  flex-shrink: 0;
+}
+
+.cart-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-title-icon {
+  width: 36px; height: 36px;
+  background: var(--spice-pale);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-title-icon svg {
+  width: 18px; height: 18px;
+  color: var(--accent);
+}
+
+.cart-title-text {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.cart-close-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-dark);
+  transition: all var(--dur-sm);
+}
+
+.cart-close-btn:hover {
+  background: var(--parchment);
+  color: var(--ink);
+}
+
+.cart-close-btn svg { width: 16px; height: 16px; }
+
+#cartItems {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.cart-empty-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-empty-icon svg {
+  width: 28px; height: 28px;
+  color: var(--muted);
+}
+
+.cart-empty-text {
+  font-size: .9rem;
+  color: var(--muted-dark);
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--r-md);
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+
+.cart-item-img {
+  width: 64px; height: 64px;
+  border-radius: var(--r-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--parchment);
+}
+
+.cart-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item-name {
+  font-weight: 600;
+  font-size: .88rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+
+.cart-item-price {
+  font-size: .8rem;
+  color: var(--forest);
+  font-weight: 500;
+}
+
+.cart-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cart-qty-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--forest);
+  transition: all var(--dur-sm);
+}
+
+.cart-qty-btn:hover {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--white);
+}
+
+.cart-qty-num {
+  font-weight: 700;
+  font-size: .9rem;
+  min-width: 22px;
+  text-align: center;
+}
+
+#cartFooter {
+  padding: 16px 20px 28px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+  flex-shrink: 0;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.cart-total-label {
+  font-weight: 600;
+  color: var(--muted-dark);
+  font-size: .9rem;
+}
+
+#cartTotal {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--forest);
+}
+
+.cart-checkout-btn {
+  width: 100%;
+  background: var(--forest);
+  color: var(--white);
+  padding: 15px;
+  border-radius: var(--r-md);
+  font-size: .95rem;
+  font-weight: 600;
+  transition: background var(--dur-sm);
+}
+
+.cart-checkout-btn:hover { background: var(--forest-mid); }
+
+/* ================================================================
+   ORDER MODAL
+   ================================================================ */
+#orderModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+
+#orderModal.visible {
+  display: flex;
+}
+
+.modal-box {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90dvh;
+  overflow-y: auto;
+  box-shadow: var(--sh-lg);
+  position: relative;
+  animation: slideUp .3s var(--ease);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  padding: 26px 26px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.modal-header-text {}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+.modal-subtitle {
+  font-size: .85rem;
+  color: var(--muted-dark);
+  margin-top: 4px;
+}
+
+.modal-close-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-dark);
+  flex-shrink: 0;
+  transition: all var(--dur-sm);
+}
+
+.modal-close-btn:hover {
+  background: var(--parchment);
+  color: var(--ink);
+}
+
+.modal-close-btn svg { width: 16px; height: 16px; }
+
+.modal-body {
+  padding: 0 26px 26px;
+}
+
+/* Order summary */
+.order-summary {
+  background: var(--cream);
+  border-radius: var(--r-md);
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+
+.order-summary-title {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: .87rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-item:last-of-type { border-bottom: none; }
+.summary-item-name { color: var(--text-sub); }
+.summary-item-price { font-weight: 600; color: var(--ink); }
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  margin-top: 6px;
+  border-top: 1.5px solid var(--border);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.summary-total-num {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--forest);
+}
+
+/* Form fields */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+  letter-spacing: .01em;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: .92rem;
+  color: var(--ink);
+  background: var(--white);
+  outline: none;
+  transition: border-color var(--dur-sm), box-shadow var(--dur-sm);
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: var(--forest);
+  box-shadow: var(--sh-glow);
+}
+
+.form-select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%236b7a65' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+}
+
+/* Radio group */
+.radio-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.radio-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  font-size: .88rem;
+  font-weight: 500;
+  transition: all var(--dur-sm) var(--ease);
+  color: var(--text-sub);
+  flex: 1;
+  justify-content: center;
+}
+
+.radio-chip:hover {
+  border-color: var(--forest);
+  color: var(--forest);
+  background: var(--sage-light);
+}
+
+.radio-chip input[type="radio"] {
+  display: none;
+}
+
+.radio-chip:has(input:checked) {
+  border-color: var(--forest);
+  background: var(--sage-light);
+  color: var(--forest);
+  font-weight: 600;
+}
+
+.radio-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  flex-shrink: 0;
+  transition: background var(--dur-sm);
+}
+
+.radio-chip:has(input:checked) .radio-dot {
+  background: var(--forest);
+}
+
+/* Hidden delivery address */
+#orderAddress {
+  display: none;
+  margin-top: -6px;
+}
+
+.form-section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+.modal-submit-btn {
+  width: 100%;
+  background: var(--forest);
+  color: var(--white);
+  padding: 15px;
+  border-radius: var(--r-md);
+  font-size: .95rem;
+  font-weight: 600;
+  transition: background var(--dur-sm);
+  margin-top: 20px;
+}
+
+.modal-submit-btn:hover { background: var(--forest-mid); }
+.modal-submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+/* ================================================================
+   TOAST NOTIFICATION
+   ================================================================ */
+#toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--ink);
+  color: var(--white);
+  padding: 12px 22px;
+  border-radius: var(--r-pill);
+  font-size: .88rem;
+  font-weight: 500;
+  z-index: 3000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .3s var(--ease);
+  box-shadow: var(--sh-lg);
+  white-space: nowrap;
+  max-width: calc(100vw - 48px);
+  white-space: normal;
+  text-align: center;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ================================================================
+   RESPONSIVE — TABLET
+   ================================================================ */
+@media (max-width: 1024px) {
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .about-visual {
+    max-width: 480px;
+  }
+
+  .about-float-card {
+    right: 0;
+  }
+
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .contacts-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE — MOBILE
+   ================================================================ */
+@media (max-width: 768px) {
+  :root {
+    --nav-h: 64px;
+    --space-2xl: 56px;
+    --space-xl: 36px;
+  }
+
+  /* Nav */
+  .nav-links { display: none; }
+  .burger { display: flex; }
+  .nav-logo-sub { display: none; }
+
+  /* Hero */
+  .hero-metrics {
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .hero-metric { padding: 0 24px; }
+  .metric-num { font-size: 2rem; }
+
+  /* Menu */
+  #menuGrid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  /* Branches */
+  #branchesGrid { grid-template-columns: 1fr; }
+
+  /* Payment */
+  .payment-grid { grid-template-columns: 1fr; }
+
+  /* Footer */
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footer-bottom { flex-direction: column; align-items: center; text-align: center; }
+
+  /* Announcement */
+  .announce-divider { display: none; }
+
+  /* Contacts */
+  .social-links { flex-direction: column; }
+}
+
+@media (max-width: 480px) {
+  .hero-ctas { flex-direction: column; align-items: center; }
+  .hero-ctas .btn { width: 100%; max-width: 300px; }
+
+  .hero-metrics {
+    padding-top: 28px;
+    margin-top: 40px;
+  }
+
+  #menuGrid { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .card-media { height: 150px; }
+  .card-body { padding: 12px 12px 14px; }
+
+  .branch-actions { flex-direction: column; }
+
+  .payment-grid { grid-template-columns: 1fr 1fr; }
+
+  .modal-box { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+  #orderModal { align-items: flex-end; padding: 0; }
+}
+
+/* ================================================================
+   PRINT / REDUCED MOTION
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ================================================================
+   FOCUS STYLES (accessibility)
+   ================================================================ */
+:focus-visible {
+  outline: 2px solid var(--forest-mid);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ================================================================
+   LOADING SKELETON
+   ================================================================ */
+.skeleton {
+  background: linear-gradient(90deg, var(--parchment) 25%, var(--cream) 50%, var(--parchment) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--r-sm);
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ================================================================
+   SECTION TRANSITIONS (intersection observer)
+   ================================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-delay-1 { transition-delay: .08s; }
+.reveal-delay-2 { transition-delay: .16s; }
+.reveal-delay-3 { transition-delay: .24s; }
+.reveal-delay-4 { transition-delay: .32s; }
+
+/* ================================================================
+   SECTION LABEL (decorative rule) 
+   ================================================================ */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.section-label-line {
+  height: 1px;
+  width: 40px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.section-label-text {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.section-label--light .section-label-line { background: rgba(255,255,255,.3); }
+.section-label--light .section-label-text { color: rgba(255,255,255,.5); }
+
+/* ================================================================
+   HALAL CERTIFICATE STRIP
+   ================================================================ */
+.halal-strip {
+  background: linear-gradient(90deg, var(--forest-mid) 0%, var(--forest) 100%);
+  padding: 16px 24px;
+}
+
+.halal-strip-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.halal-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+  padding: 9px 20px;
+  border-radius: var(--r-pill);
+  color: var(--white);
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.halal-pill-icon {
+  width: 20px; height: 20px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.halal-pill-icon svg {
+  width: 11px; height: 11px;
+  color: var(--white);
+}
+
+/* ================================================================
+   EXTRA: No-menu-item state
+   ================================================================ */
+.no-items {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted-dark);
+  font-size: .95rem;
+}
+
+/* ================================================================
+   EXTRA: Image loading states
+   ================================================================ */
+.img-loading {
+  background: var(--parchment);
+  position: relative;
+  overflow: hidden;
+}
+
+.img-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+  animation: imgShimmer 1.5s infinite;
+}
+
+@keyframes imgShimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+
+/* ================================================================
+   UTILITY HELPERS
+   ================================================================ */
+.text-center { text-align: center; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+.mt-8 { margin-top: 32px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+.mb-8 { margin-bottom: 32px; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.w-full { width: 100%; }
+.hidden { display: none !important; }
+</style>
+</head>
+
+<body>
+
+<!-- ================================================================
+     NAVBAR
+     ================================================================ -->
+<nav id="navbar">
+  <div class="nav-inner">
+
+    <!-- Logo -->
+    <a href="#hero" class="nav-logo" aria-label="ToiypAll — Басты бет">
+      <div class="nav-logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="nav-logo-text">
+        <span class="nav-logo-main">ToiypAll</span>
+        <span class="nav-logo-sub">Халал Мейрамхана</span>
+      </div>
+    </a>
+
+    <!-- Desktop links -->
+    <nav class="nav-links" aria-label="Негізгі навигация">
+      <a href="#menu" class="nav-link" data-i18n="nav_menu">Мәзір</a>
+      <a href="#branches" class="nav-link" data-i18n="nav_branches">Филиалдар</a>
+      <a href="#mapSection" class="nav-link" data-i18n="nav_map">Карта</a>
+      <a href="#contacts" class="nav-link" data-i18n="nav_contacts">Байланыс</a>
+      <a href="#about" class="nav-link" data-i18n="nav_about">Біз туралы</a>
+    </nav>
+
+    <!-- Right cluster -->
+    <div class="nav-right">
+      <!-- Language switcher -->
+      <div class="lang-switch" role="group" aria-label="Тіл таңдау">
+        <button class="lang-btn active" onclick="setLang('kk')" id="langKk">ҚАЗ</button>
+        <button class="lang-btn" onclick="setLang('ru')" id="langRu">РУС</button>
+      </div>
+
+      <!-- Cart -->
+      <button class="nav-cart-btn" onclick="toggleCart()" aria-label="Себет">
+        <svg class="nav-cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/>
+          <circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span id="cartCount">0</span>
+      </button>
+
+      <!-- Burger -->
+      <button class="burger" id="burgerBtn" onclick="toggleMobileNav()" aria-label="Мәзірді ашу" aria-expanded="false">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Mobile nav -->
+<div id="mobileNav" aria-hidden="true">
+  <a href="#menu" class="mobile-link" onclick="closeMobileNav()" data-i18n="nav_menu">Мәзір</a>
+  <a href="#branches" class="mobile-link" onclick="closeMobileNav()" data-i18n="nav_branches">Филиалдар</a>
+  <a href="#mapSection" class="mobile-link" onclick="closeMobileNav()" data-i18n="nav_map">Карта</a>
+  <a href="#about" class="mobile-link" onclick="closeMobileNav()" data-i18n="nav_about">Біз туралы</a>
+  <a href="#contacts" class="mobile-link" onclick="closeMobileNav()" data-i18n="nav_contacts">Байланыс</a>
+  <div class="mobile-nav-bottom">
+    <button class="btn btn-primary btn-sm w-full" onclick="closeMobileNav(); toggleCart();" data-i18n="cart_title">Себет</button>
+  </div>
+</div>
+
+<!-- ================================================================
+     HERO
+     ================================================================ -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-bg-lines"></div>
+  </div>
+
+  <div class="hero-content">
+    <!-- Halal indicator -->
+    <div class="hero-halal">
+      <span class="hero-halal-dot"></span>
+      <span class="hero-halal-text" data-i18n="hero_halal_badge">Сертификатталған 100% Халал</span>
+      <span class="hero-halal-dot"></span>
+    </div>
+
+    <!-- Logo -->
+    <div class="hero-logo-wrap">
+      <div class="hero-logo-ring">
+        <img 
+          src="https://minio.daladev.kz/tips/companies/logos/01K5GY19A65E1CY3PZ6S6MX3NT_optimized.webp"
+          alt="ToiypAll логотипі"
+          class="hero-logo-img"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="hero-logo-placeholder" style="display:none;">TA</div>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h1 class="hero-title">ToiypAll</h1>
+    <p class="hero-title-sub" data-i18n="hero_tagline">Отбасылық халал дәстүр</p>
+
+    <p class="hero-desc" data-i18n="hero_desc">
+      Алматыдағы ең жылы отбасылық мейрамхана. Халал сертификатты тағамдар, табиғи ингредиенттер, үй дәмі.
+    </p>
+
+    <div class="hero-ctas">
+      <a href="#menu" class="btn btn-primary btn-lg" data-i18n="hero_cta_menu">Мәзірді қарау</a>
+      <a href="#branches" class="btn btn-ghost btn-lg" data-i18n="hero_cta_branches">Мекенжайлар</a>
+    </div>
+
+    <!-- Metrics -->
+    <div class="hero-metrics">
+      <div class="hero-metric">
+        <span class="metric-num">3</span>
+        <span class="metric-label" data-i18n="stat_branches">Филиал</span>
+      </div>
+      <div class="hero-metric">
+        <span class="metric-num">100%</span>
+        <span class="metric-label" data-i18n="stat_halal">Халал</span>
+      </div>
+      <div class="hero-metric">
+        <span class="metric-num">4.9</span>
+        <span class="metric-label" data-i18n="stat_rating">Рейтинг</span>
+      </div>
+      <div class="hero-metric">
+        <span class="metric-num">09–23</span>
+        <span class="metric-label" data-i18n="stat_hours">Жұмыс сағаты</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom curve -->
+  <div class="hero-divider">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none" fill="var(--cream)">
+      <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ================================================================
+     HALAL STRIP
+     ================================================================ -->
+<div class="halal-strip">
+  <div class="halal-strip-inner">
+    <div class="halal-pill">
+      <div class="halal-pill-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <span data-i18n="strip_halal">Халал сертификатталған</span>
+    </div>
+
+    <div class="halal-pill">
+      <div class="halal-pill-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <span data-i18n="strip_fresh">Тек жаңа ингредиенттер</span>
+    </div>
+
+    <div class="halal-pill">
+      <div class="halal-pill-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <span data-i18n="strip_hours">Күн сайын 09:00 – 23:00</span>
+    </div>
+
+    <div class="halal-pill">
+      <div class="halal-pill-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span data-i18n="strip_branches">3 филиал Алматыда</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     MENU SECTION
+     ================================================================ -->
+<section id="menu" class="section">
+  <div class="container">
+    <div class="menu-header reveal">
+      <div class="section-label" style="justify-content: center;">
+        <div class="section-label-line"></div>
+        <span class="section-label-text" data-i18n="menu_eyebrow">Мәзір</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2 class="heading-1" data-i18n="menu_title">Тағам таңдаңыз</h2>
+      <p class="lead lead--center mt-4" data-i18n="menu_lead">Барлық тағамдар халал стандарттарына сай жаңа ингредиенттерден дайындалған.</p>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="cat-scroll-wrap">
+      <div class="cat-tabs" id="catTabs" role="tablist" aria-label="Мәзір санаттары">
+        <!-- JS renders tabs here -->
+      </div>
+    </div>
+
+    <!-- Menu grid -->
+    <div id="menuGrid" role="list">
+      <!-- JS renders cards here -->
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     ABOUT SECTION
+     ================================================================ -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="about-layout">
+
+      <!-- Visual -->
+      <div class="about-visual reveal">
+        <div class="about-img-frame">
+          <img
+            src="https://minio.daladev.kz/tips/companies/backdrops/01K5GY19BNHCNYP30S01HH18K9_optimized.webp"
+            alt="ToiypAll мейрамхана"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="about-img-placeholder" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+        </div>
+        <div class="about-float-card">
+          <span class="about-float-num">2022</span>
+          <div class="about-float-label" data-i18n="about_since">Бастап жұмыс жасайды</div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="about-content reveal reveal-delay-1">
+        <div class="section-label">
+          <div class="section-label-line"></div>
+          <span class="section-label-text" data-i18n="about_eyebrow">Біз туралы</span>
+        </div>
+        <h2 class="heading-1 mb-6" data-i18n="about_title">Отбасылық дәм мен дәстүр</h2>
+        <p class="lead mb-8" data-i18n="about_lead">
+          ToiypAll — бүкіл отбасы бір дастарқан басына жиналатын орын. Ұлттық рецепттерді заманауи берілуімен ұштастырамыз, ең бастысын сақтай отырып — үй тамағының дәмін.
+        </p>
+
+        <div class="features-list">
+          <div class="feature-item reveal reveal-delay-1">
+            <div class="feature-icon-wrap green-bg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title" data-i18n="feat1_title">Халал сертификат</div>
+              <div class="feature-desc" data-i18n="feat1_desc">Барлық тағамдарымыз халал стандарттарының қатаң бақылауынан өтеді</div>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-2">
+            <div class="feature-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title" data-i18n="feat2_title">Тәжірибелі аспаздар</div>
+              <div class="feature-desc" data-i18n="feat2_desc">Шеф-аспаздарымыз жүрекпен жұмыс жасайды, әрбір тағамның дәмін жеткізеді</div>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-3">
+            <div class="feature-icon-wrap green-bg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title" data-i18n="feat3_title">Отбасылық атмосфера</div>
+              <div class="feature-desc" data-i18n="feat3_desc">Барлық отбасыға арналған кең залдар мен жайлы жағдайлар</div>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-4">
+            <div class="feature-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13"/>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/>
+                <circle cx="18.5" cy="18.5" r="2.5"/>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title" data-i18n="feat4_title">Жеткізу жылдам</div>
+              <div class="feature-desc" data-i18n="feat4_desc">Алматы бойынша жылдам жеткізу немесе өзімен алу мүмкіндігі</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     BRANCHES SECTION
+     ================================================================ -->
+<section id="branches" class="section">
+  <div class="branches-bg"></div>
+  <div class="container">
+    <div class="branches-header reveal">
+      <div class="section-label" style="justify-content: center;">
+        <div class="section-label-line" style="background: rgba(255,255,255,.3);"></div>
+        <span class="section-label-text" style="color: rgba(255,255,255,.5);" data-i18n="branches_eyebrow">Біздің нүктелер</span>
+        <div class="section-label-line" style="background: rgba(255,255,255,.3);"></div>
+      </div>
+      <h2 class="heading-1" style="color: var(--white); margin-bottom: 12px;" data-i18n="branches_title">Алматыдағы филиалдар</h2>
+      <p class="lead" style="color: rgba(255,255,255,.55); margin: 0 auto;" data-i18n="branches_lead">3 ыңғайлы нүкте — сіздің жаныңызда</p>
+    </div>
+
+    <div id="branchesGrid">
+      <!-- JS renders branch cards -->
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MAP SECTION
+     ================================================================ -->
+<section id="mapSection" class="section">
+  <div class="container">
+    <div class="map-layout">
+
+      <!-- Sidebar -->
+      <div class="map-sidebar reveal">
+        <div>
+          <div class="section-label">
+            <div class="section-label-line"></div>
+            <span class="section-label-text" data-i18n="map_eyebrow">Карта</span>
+          </div>
+          <h2 class="heading-1 mb-4" data-i18n="map_title">Біздің мекенжайлар</h2>
+          <p style="font-size:.9rem; color: var(--muted-dark); margin-bottom: 20px;" data-i18n="map_lead">Алматыда 3 нүктені 2GIS-те жылдам табыңыз</p>
+        </div>
+
+        <div class="map-address-list">
+          <div class="map-address-item active" onclick="selectBranch(0)">
+            <div class="map-address-num">1</div>
+            <div class="map-address-text">Тұлпар мкр., 3, Алматы</div>
+          </div>
+          <div class="map-address-item" onclick="selectBranch(1)">
+            <div class="map-address-num">2</div>
+            <div class="map-address-text">Жандосов к., 299/1, 1 қабат, Алматы</div>
+          </div>
+          <div class="map-address-item" onclick="selectBranch(2)">
+            <div class="map-address-num">3</div>
+            <div class="map-address-text">Ади Шарипов к., 118-120, Алматы</div>
+          </div>
+        </div>
+
+        <a 
+          href="https://2gis.kz/almaty/search/ToiypAll"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-green map-open-2gis"
+          data-i18n="map_open_2gis"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          2GIS-те ашу
+        </a>
+      </div>
+
+      <!-- Map embed -->
+      <div class="map-embed reveal reveal-delay-1" id="mapEmbed">
+        <iframe
+          id="mapIframe"
+          src="https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.2565%2C%22lon%22%3A76.9286%2C%22zoom%22%3A12%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%7D"
+          allowfullscreen
+          loading="lazy"
+          title="ToiypAll Алматы картасы"
+        ></iframe>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     PAYMENT SECTION
+     ================================================================ -->
+<section id="payment" class="section">
+  <div class="payment-bg"></div>
+  <div class="container">
+    <div class="payment-layout">
+
+      <div class="payment-text reveal">
+        <div class="section-label">
+          <div class="section-label-line" style="background: rgba(255,255,255,.3);"></div>
+          <span class="section-label-text" style="color: rgba(255,255,255,.45);" data-i18n="pay_eyebrow">Төлем</span>
+        </div>
+        <h2 class="heading-1" style="color: var(--white);" data-i18n="pay_title">Ыңғайлы төлем тәсілдері</h2>
+        <p class="lead" style="color: rgba(255,255,255,.6);" data-i18n="pay_lead">Барлық танымал төлем тәсілдерін қабылдаймыз</p>
+        <a href="#menu" class="btn btn-primary mt-6" data-i18n="pay_cta">Тапсырыс беру</a>
+      </div>
+
+      <div class="payment-grid reveal reveal-delay-1">
+        <!-- Card payment -->
+        <div class="payment-card">
+          <div class="payment-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+          </div>
+          <div class="payment-name" data-i18n="pay1_name">Банк картасы</div>
+          <div class="payment-desc" data-i18n="pay1_desc">Visa, Mastercard</div>
+        </div>
+
+        <!-- Kaspi QR -->
+        <div class="payment-card">
+          <div class="payment-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+          </div>
+          <div class="payment-name" data-i18n="pay2_name">Kaspi QR</div>
+          <div class="payment-desc" data-i18n="pay2_desc">Kaspi банкі арқылы</div>
+        </div>
+
+        <!-- Cash -->
+        <div class="payment-card">
+          <div class="payment-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="payment-name" data-i18n="pay3_name">Қолма-қол</div>
+          <div class="payment-desc" data-i18n="pay3_desc">Мейрамханада немесе жеткізуде</div>
+        </div>
+
+        <!-- Transfer -->
+        <div class="payment-card">
+          <div class="payment-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"/>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </div>
+          <div class="payment-name" data-i18n="pay4_name">Аударым</div>
+          <div class="payment-desc" data-i18n="pay4_desc">Kaspi Transfer</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     CONTACTS SECTION
+     ================================================================ -->
+<section id="contacts" class="section">
+  <div class="container">
+    <div class="contacts-layout">
+
+      <div class="contacts-info reveal">
+        <div class="section-label">
+          <div class="section-label-line"></div>
+          <span class="section-label-text" data-i18n="cont_eyebrow">Байланыс</span>
+        </div>
+        <h2 class="heading-1 mb-4" data-i18n="cont_title">Бізбен байланысыңыз</h2>
+        <p class="lead mb-8" data-i18n="cont_lead">Қоңырау шалыңыз, жазыңыз — біз әрқашан байланыстамыз</p>
+
+        <div class="contact-cards">
+          <!-- Phone -->
+          <div class="contact-card">
+            <div class="contact-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.34 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l1.83-1.83a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div class="contact-content">
+              <div class="contact-label" data-i18n="cont_phone">Телефон</div>
+              <a href="tel:+77066220000" class="contact-value">+7 706 622 0000</a>
+              <a href="tel:+77076170337" class="contact-value">+7 707 617 0337</a>
+            </div>
+          </div>
+
+          <!-- Hours -->
+          <div class="contact-card">
+            <div class="contact-icon gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div class="contact-content">
+              <div class="contact-label" data-i18n="cont_hours">Жұмыс уақыты</div>
+              <span class="contact-value" data-i18n="cont_hours_val">09:00 – 23:00</span>
+              <span class="contact-value" style="color: var(--muted-dark); font-weight: 400; font-size: .82rem;" data-i18n="cont_hours_note">Күн сайын, демалыссыз</span>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="contact-card">
+            <div class="contact-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <div class="contact-content">
+              <div class="contact-label" data-i18n="cont_city">Қала</div>
+              <span class="contact-value">Алматы, Қазақстан</span>
+              <span class="contact-value" style="color: var(--muted-dark); font-weight: 400; font-size: .82rem;">3 филиал</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social / CTA -->
+      <div class="reveal reveal-delay-1">
+        <h3 class="heading-2 mb-6" style="color: var(--ink);" data-i18n="cont_social_title">Бізге жазыңыз</h3>
+
+        <div class="social-links">
+          <a href="https://wa.me/77076170337" target="_blank" rel="noopener" class="social-link whatsapp">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+            </svg>
+            <span data-i18n="cont_wa">WhatsApp-қа жазу</span>
+          </a>
+
+          <a href="https://www.instagram.com/toiypall" target="_blank" rel="noopener" class="social-link instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+            <span data-i18n="cont_instagram">Instagram-да қарау</span>
+          </a>
+
+          <a href="tel:+77066220000" class="social-link phone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.34 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l1.83-1.83a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <span data-i18n="cont_call">Қоңырау шалу</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     FOOTER
+     ================================================================ -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-main">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="footer-logo-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="footer-logo-name">ToiypAll</span>
+        </div>
+        <p class="footer-tagline" data-i18n="footer_desc">Алматыдағы отбасылық халал мейрамхана. Сіздер үшін күн сайын жұмыс жасаймыз.</p>
+        <div class="footer-badges">
+          <span class="footer-badge" data-i18n="footer_badge_halal">100% Халал</span>
+          <span class="footer-badge" data-i18n="footer_badge_fresh">Жаңа</span>
+          <span class="footer-badge" data-i18n="footer_badge_family">Отбасылық</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div>
+        <div class="footer-col-title" data-i18n="footer_nav">Навигация</div>
+        <nav class="footer-links">
+          <a href="#menu" class="footer-link" data-i18n="nav_menu">Мәзір</a>
+          <a href="#branches" class="footer-link" data-i18n="nav_branches">Филиалдар</a>
+          <a href="#mapSection" class="footer-link" data-i18n="nav_map">Карта</a>
+          <a href="#about" class="footer-link" data-i18n="nav_about">Біз туралы</a>
+          <a href="#contacts" class="footer-link" data-i18n="nav_contacts">Байланыс</a>
+        </nav>
+      </div>
+
+      <!-- Contacts -->
+      <div>
+        <div class="footer-col-title" data-i18n="footer_contact">Байланыс</div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-label">Телефон</span>
+          <a href="tel:+77066220000" class="footer-contact-val">+7 706 622 0000</a>
+          <a href="tel:+77076170337" class="footer-contact-val">+7 707 617 0337</a>
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-label" data-i18n="footer_hours">Жұмыс уақыты</span>
+          <span class="footer-contact-val">09:00 – 23:00</span>
+        </div>
+      </div>
+
+      <!-- Branches -->
+      <div>
+        <div class="footer-col-title" data-i18n="footer_branches">Мекенжайлар</div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-label">1-ші нүкте</span>
+          <span class="footer-contact-val">Тұлпар мкр., 3</span>
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-label">2-ші нүкте</span>
+          <span class="footer-contact-val">Жандосов к., 299/1</span>
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-label">3-ші нүкте</span>
+          <span class="footer-contact-val">Ади Шарипов к., 118-120</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2024 ToiypAll. <span data-i18n="footer_rights">Барлық құқықтар қорғалған.</span></span>
+      <div class="footer-bottom-links">
+        <span class="footer-bottom-link" data-i18n="footer_halal">Алматы, Қазақстан</span>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<!-- ================================================================
+     CART SIDEBAR
+     ================================================================ -->
+<div id="cartOverlay" onclick="toggleCart()"></div>
+
+<aside id="cartSidebar" aria-label="Себет" aria-hidden="true">
+  <div class="cart-header">
+    <div class="cart-title-row">
+      <div class="cart-title-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/>
+          <circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+      </div>
+      <span class="cart-title-text" data-i18n="cart_title">Себет</span>
+    </div>
+    <button class="cart-close-btn" onclick="toggleCart()" aria-label="Себетті жабу">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="cartItems"></div>
+
+  <div id="cartFooter" style="display: none;">
+    <div class="cart-total">
+      <span class="cart-total-label" data-i18n="cart_total">Барлығы:</span>
+      <span id="cartTotal">0 ₸</span>
+    </div>
+    <button class="cart-checkout-btn" onclick="checkout()" data-i18n="cart_checkout">Тапсырысты рәсімдеу</button>
+  </div>
+</aside>
+
+<!-- ================================================================
+     ORDER MODAL
+     ================================================================ -->
+<div id="orderModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <h2 class="modal-title" id="modalTitle" data-i18n="order_title">Тапсырысты рәсімдеу</h2>
+        <p class="modal-subtitle" data-i18n="order_subtitle">Мәліметтерді толтырыңыз</p>
+      </div>
+      <button class="modal-close-btn" onclick="closeModal()" aria-label="Жабу">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Order summary -->
+      <div class="order-summary" id="modalSummary"></div>
+
+      <!-- Branch select -->
+      <div class="form-group">
+        <label class="form-label" for="orderBranch" data-i18n="order_branch_lbl">Филиал</label>
+        <select class="form-select" id="orderBranch">
+          <option value="" data-i18n="order_branch_ph">Филиалды таңдаңыз</option>
+        </select>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label class="form-label" for="orderName" data-i18n="order_name">Сіздің атыңыз</label>
+        <input type="text" class="form-input" id="orderName" data-i18n-ph="order_name_ph" placeholder="Атыңызды енгізіңіз" autocomplete="given-name"/>
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label class="form-label" for="orderPhone" data-i18n="order_phone">Телефон нөмірі</label>
+        <input type="tel" class="form-input" id="orderPhone" placeholder="+7 (___) ___-__-__" autocomplete="tel"/>
+      </div>
+
+      <!-- Order type -->
+      <div class="form-group">
+        <label class="form-label" data-i18n="order_type_lbl">Тапсырыс түрі</label>
+        <div class="radio-row">
+          <label class="radio-chip">
+            <input type="radio" name="otype" value="pickup" checked/>
+            <span class="radio-dot"></span>
+            <span data-i18n="order_pickup">Өзімен алу</span>
+          </label>
+          <label class="radio-chip">
+            <input type="radio" name="otype" value="delivery"/>
+            <span class="radio-dot"></span>
+            <span data-i18n="order_delivery">Жеткізу</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Delivery address (hidden by default) -->
+      <div id="orderAddress" class="form-group">
+        <label class="form-label" for="orderAddrInput" data-i18n="order_addr_lbl">Жеткізу мекенжайы</label>
+        <input type="text" class="form-input" id="orderAddrInput" data-i18n-ph="order_addr_ph" placeholder="Көше, үй, пәтер"/>
+      </div>
+
+      <div class="form-section-divider"></div>
+
+      <!-- Payment method -->
+      <div class="form-group">
+        <label class="form-label" for="orderPay" data-i18n="order_pay_lbl">Төлем тәсілі</label>
+        <select class="form-select" id="orderPay">
+          <option value="cash" data-i18n="pay3_name">Қолма-қол</option>
+          <option value="kaspi_qr" data-i18n="pay2_name">Kaspi QR</option>
+          <option value="card" data-i18n="pay1_name">Банк картасы</option>
+          <option value="transfer" data-i18n="pay4_name">Аударым</option>
+        </select>
+      </div>
+
+      <button class="modal-submit-btn" onclick="submitOrder()" data-i18n="order_submit">Тапсырысты растау</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ================================================================
+     JAVASCRIPT
+     ================================================================ -->
+<script>
+/* ---------------------------------------------------------------
+   CONSTANTS — API & CONFIG
+   --------------------------------------------------------------- */
+const API_BASE = window.API_BASE || 'http://localhost:3000';
+
+/* ---------------------------------------------------------------
+   TRANSLATIONS
+   --------------------------------------------------------------- */
+const TRANSLATIONS = {
+  kk: {
+    nav_menu:          'Мәзір',
+    nav_branches:      'Филиалдар',
+    nav_map:           'Карта',
+    nav_contacts:      'Байланыс',
+    nav_about:         'Біз туралы',
+
+    hero_halal_badge:  'Сертификатталған 100% Халал',
+    hero_tagline:      'Отбасылық халал дәстүр',
+    hero_desc:         'Алматыдағы ең жылы отбасылық мейрамхана. Халал сертификатты тағамдар, табиғи ингредиенттер, үй дәмі.',
+    hero_cta_menu:     'Мәзірді қарау',
+    hero_cta_branches: 'Мекенжайлар',
+
+    stat_branches:     'Филиал',
+    stat_halal:        'Халал',
+    stat_rating:       'Рейтинг',
+    stat_hours:        'Жұмыс сағаты',
+
+    strip_halal:       'Халал сертификатталған',
+    strip_fresh:       'Тек жаңа ингредиенттер',
+    strip_hours:       'Күн сайын 09:00 – 23:00',
+    strip_branches:    '3 филиал Алматыда',
+
+    menu_eyebrow:      'Мәзір',
+    menu_title:        'Тағам таңдаңыз',
+    menu_lead:         'Барлық тағамдар халал стандарттарына сай жаңа ингредиенттерден дайындалған.',
+    add_btn:           'Себетке',
+
+    about_eyebrow:     'Біз туралы',
+    about_title:       'Отбасылық дәм мен дәстүр',
+    about_lead:        'ToiypAll — бүкіл отбасы бір дастарқан басына жиналатын орын. Ұлттық рецепттерді заманауи берілуімен ұштастырамыз.',
+    about_since:       'Бастап жұмыс жасайды',
+
+    feat1_title:       'Халал сертификат',
+    feat1_desc:        'Барлық тағамдарымыз халал стандарттарының қатаң бақылауынан өтеді',
+    feat2_title:       'Тәжірибелі аспаздар',
+    feat2_desc:        'Шеф-аспаздарымыз жүрекпен жұмыс жасайды, әрбір тағамның дәмін жеткізеді',
+    feat3_title:       'Отбасылық атмосфера',
+    feat3_desc:        'Барлық отбасыға арналған кең залдар мен жайлы жағдайлар',
+    feat4_title:       'Жеткізу жылдам',
+    feat4_desc:        'Алматы бойынша жылдам жеткізу немесе өзімен алу мүмкіндігі',
+
+    branches_eyebrow:  'Біздің нүктелер',
+    branches_title:    'Алматыдағы филиалдар',
+    branches_lead:     '3 ыңғайлы нүкте — сіздің жаныңызда',
+    open_now:          'Ашық',
+    closed_now:        'Жабық',
+    hours_label:       'Жұмыс уақыты',
+    branch_call:       'Қоңырау',
+    branch_2gis:       '2GIS-те қарау',
+    branch_wa:         'WhatsApp',
+
+    map_eyebrow:       'Карта',
+    map_title:         'Біздің мекенжайлар',
+    map_lead:          'Алматыда 3 нүктені 2GIS-те жылдам табыңыз',
+    map_open_2gis:     '2GIS-те ашу',
+
+    pay_eyebrow:       'Төлем',
+    pay_title:         'Ыңғайлы төлем тәсілдері',
+    pay_lead:          'Барлық танымал төлем тәсілдерін қабылдаймыз',
+    pay_cta:           'Тапсырыс беру',
+    pay1_name:         'Банк картасы',
+    pay1_desc:         'Visa, Mastercard',
+    pay2_name:         'Kaspi QR',
+    pay2_desc:         'Kaspi банкі арқылы',
+    pay3_name:         'Қолма-қол',
+    pay3_desc:         'Мейрамханада немесе жеткізуде',
+    pay4_name:         'Аударым',
+    pay4_desc:         'Kaspi Transfer',
+
+    cont_eyebrow:      'Байланыс',
+    cont_title:        'Бізбен байланысыңыз',
+    cont_lead:         'Қоңырау шалыңыз, жазыңыз — біз әрқашан байланыстамыз',
+    cont_phone:        'Телефон',
+    cont_hours:        'Жұмыс уақыты',
+    cont_hours_val:    '09:00 – 23:00',
+    cont_hours_note:   'Күн сайын, демалыссыз',
+    cont_city:         'Қала',
+    cont_social_title: 'Бізге жазыңыз',
+    cont_wa:           'WhatsApp-қа жазу',
+    cont_instagram:    'Instagram-да қарау',
+    cont_call:         'Қоңырау шалу',
+
+    footer_desc:       'Алматыдағы отбасылық халал мейрамхана. Сіздер үшін күн сайын жұмыс жасаймыз.',
+    footer_nav:        'Навигация',
+    footer_contact:    'Байланыс',
+    footer_branches:   'Мекенжайлар',
+    footer_hours:      'Жұмыс уақыты',
+    footer_rights:     'Барлық құқықтар қорғалған.',
+    footer_halal:      'Алматы, Қазақстан',
+    footer_badge_halal: '100% Халал',
+    footer_badge_fresh: 'Жаңа',
+    footer_badge_family:'Отбасылық',
+
+    cart_title:        'Себет',
+    cart_empty:        'Себет бос. Тағам таңдаңыз!',
+    cart_total:        'Барлығы:',
+    cart_checkout:     'Тапсырысты рәсімдеу',
+
+    order_title:       'Тапсырысты рәсімдеу',
+    order_subtitle:    'Мәліметтерді толтырыңыз',
+    order_branch_lbl:  'Филиал',
+    order_branch_ph:   'Филиалды таңдаңыз',
+    order_name:        'Сіздің атыңыз',
+    order_name_ph:     'Атыңызды енгізіңіз',
+    order_phone:       'Телефон нөмірі',
+    order_type_lbl:    'Тапсырыс түрі',
+    order_pickup:      'Өзімен алу',
+    order_delivery:    'Жеткізу',
+    order_addr_lbl:    'Жеткізу мекенжайы',
+    order_addr_ph:     'Көше, үй, пәтер',
+    order_pay_lbl:     'Төлем тәсілі',
+    order_submit:      'Тапсырысты растау',
+    order_fill:        'Аты мен телефонды толтырыңыз!',
+    order_select_br:   'Филиалды таңдаңыз!',
+    order_items_title: 'Тапсырыс',
+    summary_total:     'Барлығы',
+
+    toast_added:       'Себетке қосылды',
+    toast_order:       'Тапсырыс қабылданды! Жақын арада хабарласамыз.',
+  },
+
+  ru: {
+    nav_menu:          'Меню',
+    nav_branches:      'Филиалы',
+    nav_map:           'Карта',
+    nav_contacts:      'Контакты',
+    nav_about:         'О нас',
+
+    hero_halal_badge:  'Сертифицированный 100% Халал',
+    hero_tagline:      'Семейная халал традиция',
+    hero_desc:         'Самый тёплый семейный ресторан в Алматы. Халал-сертифицированные блюда, натуральные ингредиенты, домашний вкус.',
+    hero_cta_menu:     'Смотреть меню',
+    hero_cta_branches: 'Адреса',
+
+    stat_branches:     'Филиала',
+    stat_halal:        'Халал',
+    stat_rating:       'Рейтинг',
+    stat_hours:        'Часы работы',
+
+    strip_halal:       'Халал сертифицирован',
+    strip_fresh:       'Только свежие ингредиенты',
+    strip_hours:       'Ежедневно 09:00 – 23:00',
+    strip_branches:    '3 филиала в Алматы',
+
+    menu_eyebrow:      'Меню',
+    menu_title:        'Выберите блюдо',
+    menu_lead:         'Все блюда приготовлены из свежих халал-ингредиентов с любовью.',
+    add_btn:           'В корзину',
+
+    about_eyebrow:     'О нас',
+    about_title:       'Семейный вкус и традиции',
+    about_lead:        'ToiypAll — место, где вся семья собирается за одним столом. Мы сочетаем национальные рецепты с современной подачей.',
+    about_since:       'Работаем с',
+
+    feat1_title:       'Халал сертификат',
+    feat1_desc:        'Все наши блюда проходят строгий контроль халал-стандартов',
+    feat2_title:       'Опытные повара',
+    feat2_desc:        'Наши шеф-повара работают с душой, передавая вкус каждого блюда',
+    feat3_title:       'Семейная атмосфера',
+    feat3_desc:        'Просторные залы и уютная обстановка для всей семьи',
+    feat4_title:       'Быстрая доставка',
+    feat4_desc:        'Быстрая доставка по Алматы или самовывоз',
+
+    branches_eyebrow:  'Наши точки',
+    branches_title:    'Филиалы в Алматы',
+    branches_lead:     '3 удобные точки — рядом с вами',
+    open_now:          'Открыто',
+    closed_now:        'Закрыто',
+    hours_label:       'Часы работы',
+    branch_call:       'Звонок',
+    branch_2gis:       'В 2GIS',
+    branch_wa:         'WhatsApp',
+
+    map_eyebrow:       'Карта',
+    map_title:         'Наши адреса',
+    map_lead:          'Найдите 3 точки в Алматы быстро через 2GIS',
+    map_open_2gis:     'Открыть в 2GIS',
+
+    pay_eyebrow:       'Оплата',
+    pay_title:         'Удобные способы оплаты',
+    pay_lead:          'Принимаем все популярные способы оплаты',
+    pay_cta:           'Сделать заказ',
+    pay1_name:         'Банковская карта',
+    pay1_desc:         'Visa, Mastercard',
+    pay2_name:         'Kaspi QR',
+    pay2_desc:         'Через Kaspi банк',
+    pay3_name:         'Наличные',
+    pay3_desc:         'В ресторане или при доставке',
+    pay4_name:         'Перевод',
+    pay4_desc:         'Kaspi Transfer',
+
+    cont_eyebrow:      'Контакты',
+    cont_title:        'Свяжитесь с нами',
+    cont_lead:         'Звоните, пишите — мы всегда на связи',
+    cont_phone:        'Телефон',
+    cont_hours:        'Часы работы',
+    cont_hours_val:    '09:00 – 23:00',
+    cont_hours_note:   'Ежедневно, без выходных',
+    cont_city:         'Город',
+    cont_social_title: 'Напишите нам',
+    cont_wa:           'Написать в WhatsApp',
+    cont_instagram:    'Смотреть в Instagram',
+    cont_call:         'Позвонить',
+
+    footer_desc:       'Семейный халал ресторан в Алматы. Работаем для вас каждый день.',
+    footer_nav:        'Навигация',
+    footer_contact:    'Контакты',
+    footer_branches:   'Адреса',
+    footer_hours:      'Часы работы',
+    footer_rights:     'Все права защищены.',
+    footer_halal:      'Алматы, Казахстан',
+    footer_badge_halal: '100% Халал',
+    footer_badge_fresh: 'Свежее',
+    footer_badge_family:'Семейный',
+
+    cart_title:        'Корзина',
+    cart_empty:        'Корзина пуста. Выберите блюдо!',
+    cart_total:        'Итого:',
+    cart_checkout:     'Оформить заказ',
+
+    order_title:       'Оформление заказа',
+    order_subtitle:    'Заполните данные',
+    order_branch_lbl:  'Филиал',
+    order_branch_ph:   'Выберите филиал',
+    order_name:        'Ваше имя',
+    order_name_ph:     'Введите имя',
+    order_phone:       'Номер телефона',
+    order_type_lbl:    'Тип заказа',
+    order_pickup:      'Самовывоз',
+    order_delivery:    'Доставка',
+    order_addr_lbl:    'Адрес доставки',
+    order_addr_ph:     'Улица, дом, квартира',
+    order_pay_lbl:     'Способ оплаты',
+    order_submit:      'Подтвердить заказ',
+    order_fill:        'Заполните имя и телефон!',
+    order_select_br:   'Выберите филиал!',
+    order_items_title: 'Заказ',
+    summary_total:     'Итого',
+
+    toast_added:       'Добавлено в корзину',
+    toast_order:       'Заказ принят! Скоро свяжемся с вами.',
+  },
+};
+
+/* ---------------------------------------------------------------
+   MENU DATA — From toiypall.qrpay.kz
+   --------------------------------------------------------------- */
+const MENU = [
+  /* ── ВЫПЕЧКА ── */
+  {
+    id: 101, cat: 'baking',
+    name: { kk: 'Тауық самсасы', ru: 'Самса с курицей' },
+    price: 500,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58FHAW50TDRAE2ZNM91YTBV_optimized_optimized.webp@webp',
+  },
+  {
+    id: 102, cat: 'baking',
+    name: { kk: 'Сиыр самсасы', ru: 'Самса с говядиной' },
+    price: 550,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58FFV4TX9Z2X213C1YP1W50_optimized_optimized.webp@webp',
+  },
+  {
+    id: 103, cat: 'baking',
+    name: { kk: 'Кесе самса', ru: 'Кесе самса' },
+    price: 1800,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58FJZS2FSVR0J1R5NE2Z59M.webp@webp',
+  },
+  {
+    id: 104, cat: 'baking',
+    name: { kk: 'Нан', ru: 'Лепёшка' },
+    price: 300,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K59E06AR4WMZY8Z8TZ6YAKQW.webp@webp',
+  },
+
+  /* ── САЛАТТАР ── */
+  {
+    id: 201, cat: 'salads',
+    name: { kk: 'Ачи-чук', ru: 'Ачи-чук' },
+    price: 1100,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56AVWJ4E73RXBX5ARC6497Y.webp@webp',
+  },
+  {
+    id: 202, cat: 'salads',
+    name: { kk: 'Грек салаты', ru: 'Греческий салат' },
+    price: 1390,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56B3E6V211K75SXAMZC1FFC_optimized_optimized.webp@webp',
+  },
+  {
+    id: 203, cat: 'salads',
+    name: { kk: 'Үйдің салаты', ru: 'Салат по-домашнему' },
+    price: 1090,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K6K3A7GFTDPY43MKVGKSW0ZJ_optimized.webp@webp',
+  },
+
+  /* ── СОРПАЛАР ── */
+  {
+    id: 301, cat: 'soups',
+    name: { kk: 'Үйдің лағманы', ru: 'Лагман по-домашнему' },
+    price: 1890,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K566WT4J5D1FEP0BC7CC9PBR_optimized.webp@webp',
+  },
+  {
+    id: 302, cat: 'soups',
+    name: { kk: 'Тауық кеспе сорпа', ru: 'Куриный суп-лапша' },
+    price: 1590,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K5GZPF7JGC30EQSMKG3ANMMK_optimized_optimized_optimized_optimized.webp@webp',
+  },
+  {
+    id: 303, cat: 'soups',
+    name: { kk: 'Пельмендер', ru: 'Пельмени' },
+    desc: { kk: 'Сиыр етті жұмсақ пельмендер. Сары майда қайнатылған.', ru: 'Нежные пельмени из говядины со сливочным маслом.' },
+    price: 1790,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K567R404SWE2DPRAXC4GJYG8_optimized_optimized.webp@webp',
+  },
+  {
+    id: 304, cat: 'soups',
+    name: { kk: 'Көкөніс пельмендері', ru: 'Пельмени с овощами' },
+    desc: { kk: 'Қырыққабат, сәбіз, пиязбен жасалған жеңіл пельмендер.', ru: 'Нежные пельмени с начинкой из капусты, моркови и лука.' },
+    price: 1590,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56AGQB21BCM1Y0JFJTZQY19_optimized.webp@webp',
+  },
+  {
+    id: 305, cat: 'soups',
+    name: { kk: 'Мастава', ru: 'Мастава' },
+    desc: { kk: 'Дәстүрлі өзбек сорпасы. Қозы, картоп, сәбіз, пияз, қызанақ.', ru: 'Традиционный узбекский суп с ягнёнком и овощами.' },
+    price: 1590,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56AHGT9DQBSVW46CAKVD94Y_optimized.webp@webp',
+  },
+  {
+    id: 306, cat: 'soups',
+    name: { kk: 'Рамен', ru: 'Рамен' },
+    price: 1990,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K59BK1W7BD754NKSXSZNX8JE_optimized.webp@webp',
+  },
+  {
+    id: 307, cat: 'soups',
+    name: { kk: 'Том ям', ru: 'Том ям' },
+    price: 3290,
+    img: null,
+  },
+  {
+    id: 308, cat: 'soups',
+    name: { kk: 'Голубцы', ru: 'Голубцы' },
+    price: 1890,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K5H2S1KM3WT4G9BPG26CADYE_optimized.webp@webp',
+  },
+
+  /* ── ЕКІНШІ ТАҒАМ ── */
+  {
+    id: 401, cat: 'mains',
+    name: { kk: 'Ташкент палауы', ru: 'Ташкентский плов' },
+    price: 1990,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56CCZ3KQE74APG5BP5Y6KXY.webp@webp',
+  },
+  {
+    id: 402, cat: 'mains',
+    name: { kk: 'Хан палауы', ru: 'Ханский плов' },
+    price: 2390,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56CG37TY472YPD3WZRQBESA.webp@webp',
+  },
+  {
+    id: 403, cat: 'mains',
+    name: { kk: 'Люля палауы', ru: 'Люля плов' },
+    price: 2390,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56CKEPGB3DVHAA86QP6T1CT.webp@webp',
+  },
+  {
+    id: 404, cat: 'mains',
+    name: { kk: 'Ұйғыр ганфаны', ru: 'Уйгурский ганфан' },
+    price: 1650,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56CRYJAMSBGEMXV9G0V2W9E_optimized.webp@webp',
+  },
+  {
+    id: 405, cat: 'mains',
+    name: { kk: 'Манты', ru: 'Манты' },
+    price: 2200,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56D0Z3S1PTGJJ9PJMF9N8RE_optimized.webp@webp',
+  },
+  {
+    id: 406, cat: 'mains',
+    name: { kk: 'Бұқа құйрығы', ru: 'Бычий хвост' },
+    price: 2890,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56D6NP0GGQE35VVXZ662S2E.webp@webp',
+  },
+  {
+    id: 407, cat: 'mains',
+    name: { kk: 'ToiypAll қуырдақ', ru: 'ТойыпAll куырдак' },
+    price: 3450,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56DAXHC6GD1JQ55ZVW628MJ_optimized.webp@webp',
+  },
+  {
+    id: 408, cat: 'mains',
+    name: { kk: 'Тауық табаға', ru: 'Куриный табага' },
+    price: 2150,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K56DP34WHE25S8182Z88TVX7_optimized.webp@webp',
+  },
+  {
+    id: 409, cat: 'mains',
+    name: { kk: 'Қуырылған қой басы', ru: 'Жареная баранья голова' },
+    price: 3990,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K59CZ9EYQ79KY0CTYPBPZH20_optimized.webp@webp',
+  },
+  {
+    id: 410, cat: 'mains',
+    name: { kk: 'Қуырдақ', ru: 'Куырдак' },
+    price: 3150,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K59DA1YP1JA2P96V2Z6E4NC6_optimized.webp@webp',
+  },
+
+  /* ── ГАРНИР ── */
+  {
+    id: 501, cat: 'sides',
+    name: { kk: 'Қуырылған картоп', ru: 'Картофель фри' },
+    price: 800,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58R2TMN62ZNJM510ZXHCDTY.webp@webp',
+  },
+  {
+    id: 502, cat: 'sides',
+    name: { kk: 'Күріш', ru: 'Рис припущенный' },
+    price: 350,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58R3PGC5WXPP55AQPZQFCQ8.webp@webp',
+  },
+
+  /* ── ТОСТАҒАНДАР / СОУС ── */
+  {
+    id: 601, cat: 'extras',
+    name: { kk: 'Қазы 1 дана', ru: 'Казы 1 шт.' },
+    price: 350,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K5H2D9P6N8YGYC5WZ0H5DAK1_optimized.webp@webp',
+  },
+  {
+    id: 602, cat: 'extras',
+    name: { kk: 'Лимон', ru: 'Лимон' },
+    price: 250,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K5H2KZJ7MABB204H74TAQ382_optimized.webp@webp',
+  },
+  {
+    id: 603, cat: 'extras',
+    name: { kk: 'Соус', ru: 'Соус' },
+    price: 100,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K596SZ0Y69756F004T4NZJ1A_optimized.webp@webp',
+  },
+  {
+    id: 604, cat: 'extras',
+    name: { kk: 'Бөдене жұмыртқасы 1 дана', ru: 'Перепелиное яйцо 1 шт.' },
+    price: 150,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K596YJEYC6MKSZ4X6SQDQVGT.webp@webp',
+  },
+
+  /* ── ДЕСЕРТ ── */
+  {
+    id: 701, cat: 'desserts',
+    name: { kk: 'Десерттер', ru: 'Десерты' },
+    price: 1590,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58RH6QQWA9N1Y64VDRK26RK_optimized.webp@webp',
+  },
+  {
+    id: 702, cat: 'desserts',
+    name: { kk: 'Испан чизкейкі', ru: 'Испанский чизкейк' },
+    price: 1590,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58RP9ZTYMNCG8XN0CZJFSB3_optimized.webp@webp',
+  },
+  {
+    id: 703, cat: 'desserts',
+    name: { kk: 'Дубай шоколады S', ru: 'Дубайский шоколад S' },
+    price: 1500,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58RSHC9NZJ02JHY1FGDYPMX_optimized.webp@webp',
+  },
+  {
+    id: 704, cat: 'desserts',
+    name: { kk: 'Дубай шоколады M', ru: 'Дубайский шоколад M' },
+    price: 2200,
+    img: 'https://img.qrpay.kz/insecure/q:82/w:400/h:400/plain/https://minio.daladev.kz/tips/items/thumbnails/01K58RSHC9NZJ02JHY1FGDYPMX_optimized.webp@webp',
+  },
+];
+
+/* Category definitions */
+const CATEGORIES = [
+  { key: 'all',      label: { kk: 'Барлығы',         ru: 'Все' } },
+  { key: 'baking',   label: { kk: 'Нан өнімдері',    ru: 'Выпечка' } },
+  { key: 'salads',   label: { kk: 'Салаттар',         ru: 'Салаты' } },
+  { key: 'soups',    label: { kk: 'Сорпалар',         ru: 'Супы' } },
+  { key: 'mains',    label: { kk: 'Екінші тағам',     ru: 'Вторые блюда' } },
+  { key: 'sides',    label: { kk: 'Гарнир',           ru: 'Гарниры' } },
+  { key: 'extras',   label: { kk: 'Қосымша',          ru: 'Доп. позиции' } },
+  { key: 'desserts', label: { kk: 'Десерттер',        ru: 'Десерты' } },
+];
+
+/* ---------------------------------------------------------------
+   BRANCHES DATA — Almaty, real addresses
+   --------------------------------------------------------------- */
+const BRANCHES = [
+  {
+    id: 'tulpar',
+    name: { kk: 'Тұлпар нүктесі', ru: 'Точка Тулпар' },
+    address: { kk: 'Тұлпар мкр., 3, Алматы', ru: 'мкр. Тулпар, 3, Алматы' },
+    phone: '+7 706 622 0000',
+    hours: { kk: '09:00 – 23:00', ru: '09:00 – 23:00' },
+    mapUrl: 'https://2gis.kz/almaty/search/%D0%A2%D0%BE%D0%B9%D1%8B%D0%BF%20%D0%90%D0%BB%D0%BB/49.834,73.100',
+    coords: { lat: 43.222, lon: 76.840 },
+    openHour: 9,
+    closeHour: 23,
+  },
+  {
+    id: 'jandosov',
+    name: { kk: 'Жандосов нүктесі', ru: 'Точка Жандосова' },
+    address: { kk: 'Жандосов к., 299/1, 1 қабат, Алматы', ru: 'ул. Жандосова, 299/1, 1 этаж, Алматы' },
+    phone: '+7 707 617 0337',
+    hours: { kk: '09:00 – 23:00', ru: '09:00 – 23:00' },
+    mapUrl: 'https://2gis.kz/almaty/search/%D0%96%D0%B0%D0%BD%D0%B4%D0%BE%D1%81%D0%BE%D0%B2%D0%B0%20299',
+    coords: { lat: 43.256, lon: 76.928 },
+    openHour: 9,
+    closeHour: 23,
+  },
+  {
+    id: 'sharipov',
+    name: { kk: 'Ади Шарипов нүктесі', ru: 'Точка Ади Шарипова' },
+    address: { kk: 'Ади Шарипов к., 118-120, Алматы', ru: 'ул. Ади Шарипова, 118-120, Алматы' },
+    phone: '+7 706 622 0000',
+    hours: { kk: '09:00 – 23:00', ru: '09:00 – 23:00' },
+    mapUrl: 'https://2gis.kz/almaty/search/%D0%90%D0%B4%D0%B8%20%D0%A8%D0%B0%D1%80%D0%B8%D0%BF%D0%BE%D0%B2%D0%B0%20118',
+    coords: { lat: 43.250, lon: 76.915 },
+    openHour: 9,
+    closeHour: 23,
+  },
+];
+
+/* ---------------------------------------------------------------
+   STATE
+   --------------------------------------------------------------- */
+let currentLang = 'kk';
+let currentCat  = 'all';
+let cart        = {};  // id -> qty
+
+/* ---------------------------------------------------------------
+   TRANSLATION ENGINE
+   --------------------------------------------------------------- */
+function t(key) {
+  return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) ||
+         (TRANSLATIONS.kk && TRANSLATIONS.kk[key]) || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+
+  // Update lang buttons
+  document.getElementById('langKk').classList.toggle('active', lang === 'kk');
+  document.getElementById('langRu').classList.toggle('active', lang === 'ru');
+
+  // Apply all data-i18n attributes
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val) el.textContent = val;
+  });
+
+  // Apply placeholder translations
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    const val = t(key);
+    if (val) el.placeholder = val;
+  });
+
+  // Re-render dynamic sections
+  renderCategoryTabs();
+  renderMenuGrid(currentCat);
+  renderBranches();
+  renderCartItems();
+
+  // Re-populate select
+  const sel = document.getElementById('orderBranch');
+  if (sel) {
+    sel.innerHTML = `<option value="">${t('order_branch_ph')}</option>` +
+      BRANCHES.map(b => `<option value="${b.id}">${b.name[currentLang] || b.name.kk}</option>`).join('');
+  }
+}
+
+/* ---------------------------------------------------------------
+   CATEGORY TABS
+   --------------------------------------------------------------- */
+function renderCategoryTabs() {
+  const container = document.getElementById('catTabs');
+  if (!container) return;
+
+  container.innerHTML = CATEGORIES.map(cat => {
+    const active = cat.key === currentCat ? 'active' : '';
+    const label  = cat.label[currentLang] || cat.label.kk;
+    return `<button
+      class="cat-tab ${active}"
+      onclick="selectCategory('${cat.key}')"
+      role="tab"
+      aria-selected="${cat.key === currentCat}"
+      data-cat="${cat.key}"
+    >${label}</button>`;
+  }).join('');
+}
+
+function selectCategory(key) {
+  currentCat = key;
+  renderCategoryTabs();
+  renderMenuGrid(key);
+}
+
+/* ---------------------------------------------------------------
+   MENU GRID
+   --------------------------------------------------------------- */
+function renderMenuGrid(cat) {
+  const grid = document.getElementById('menuGrid');
+  if (!grid) return;
+
+  const items = cat === 'all' ? MENU : MENU.filter(m => m.cat === cat);
+
+  if (items.length === 0) {
+    grid.innerHTML = `<div class="no-items">${t('no_items') || 'Тағам жоқ'}</div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(item => buildMenuCard(item)).join('');
+}
+
+function buildMenuCard(item) {
+  const name    = item.name[currentLang] || item.name.kk;
+  const desc    = item.desc ? (item.desc[currentLang] || item.desc.kk) : '';
+  const qty     = cart[item.id] || 0;
+  const imgSrc  = item.img;
+
+  const imgEl = imgSrc
+    ? `<img src="${imgSrc}" alt="${name}" loading="lazy"
+           onerror="this.style.display='none'; this.parentElement.querySelector('.card-media-placeholder').style.display='flex';"
+       />`
+    : '';
+
+  const placeholderEl = `<div class="card-media-placeholder" ${imgSrc ? 'style="display:none;"' : ''}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+      <path d="M7 2v20"/>
+      <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
+    </svg>
+  </div>`;
+
+  const controls = qty === 0
+    ? `<button class="card-add-btn" onclick="addToCart(${item.id})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>${t('add_btn')}</span>
+       </button>`
+    : `<div class="card-qty" id="cardQty_${item.id}">
+        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+        <span class="qty-num" id="qtyNum_${item.id}">${qty}</span>
+        <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
+       </div>`;
+
+  return `<article class="menu-card" role="listitem">
+    <div class="card-media">
+      ${imgEl}
+      ${placeholderEl}
+      <span class="card-halal-tag">Халал</span>
+    </div>
+    <div class="card-body">
+      <h3 class="card-name">${name}</h3>
+      ${desc ? `<p class="card-desc">${desc}</p>` : ''}
+      <div class="card-footer">
+        <span class="card-price">${item.price.toLocaleString()} ₸</span>
+        <div id="cardCtrl_${item.id}">${controls}</div>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* ---------------------------------------------------------------
+   CART LOGIC
+   --------------------------------------------------------------- */
+function addToCart(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  updateCartUI();
+  refreshCardControl(id);
+  showToast(t('toast_added'));
+}
+
+function changeQty(id, delta) {
+  const newQty = (cart[id] || 0) + delta;
+  if (newQty <= 0) {
+    delete cart[id];
+  } else {
+    cart[id] = newQty;
+  }
+  updateCartUI();
+  refreshCardControl(id);
+  renderCartItems();
+}
+
+function refreshCardControl(id) {
+  const ctrl = document.getElementById(`cardCtrl_${id}`);
+  if (!ctrl) return;
+
+  const qty = cart[id] || 0;
+  if (qty === 0) {
+    ctrl.innerHTML = `<button class="card-add-btn" onclick="addToCart(${id})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      <span>${t('add_btn')}</span>
+    </button>`;
+  } else {
+    ctrl.innerHTML = `<div class="card-qty" id="cardQty_${id}">
+      <button class="qty-btn" onclick="changeQty(${id}, -1)">−</button>
+      <span class="qty-num" id="qtyNum_${id}">${qty}</span>
+      <button class="qty-btn" onclick="changeQty(${id}, +1)">+</button>
+    </div>`;
+  }
+}
+
+function updateCartUI() {
+  const total = Object.keys(cart).reduce((s, id) => s + (cart[id] || 0), 0);
+  const count = document.getElementById('cartCount');
+  if (count) count.textContent = total;
+}
+
+/* ---------------------------------------------------------------
+   BRANCHES RENDER
+   --------------------------------------------------------------- */
+function isOpen(branch) {
+  const now = new Date();
+  const h   = now.getHours();
+  return h >= branch.openHour && h < branch.closeHour;
+}
+
+function renderBranches() {
+  const grid = document.getElementById('branchesGrid');
+  if (!grid) return;
+
+  grid.innerHTML = BRANCHES.map((b, i) => {
+    const open     = isOpen(b);
+    const name     = b.name[currentLang] || b.name.kk;
+    const addr     = b.address[currentLang] || b.address.kk;
+    const hours    = b.hours[currentLang] || b.hours.kk;
+    const statusClass = open ? 'badge-open' : 'badge-closed';
+    const statusText  = open ? t('open_now') : t('closed_now');
+
+    return `<div class="branch-card reveal reveal-delay-${i + 1}">
+      <div class="branch-header-row">
+        <div>
+          <div class="branch-number">${t('stat_branches').slice(0,1)}${i+1}</div>
+          <div class="branch-name">${name}</div>
+        </div>
+        <span class="badge ${statusClass}">${statusText}</span>
+      </div>
+
+      <div class="branch-info-row">
+        <div class="branch-info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="branch-info-text">
+          <div class="branch-info-label">${t('cont_city')}</div>
+          <div class="branch-info-val">${addr}</div>
+        </div>
+      </div>
+
+      <div class="branch-info-row">
+        <div class="branch-info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="branch-info-text">
+          <div class="branch-info-label">${t('hours_label')}</div>
+          <div class="branch-info-val">${hours}</div>
+        </div>
+      </div>
+
+      <div class="branch-info-row">
+        <div class="branch-info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.34A2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l1.83-1.83a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </div>
+        <div class="branch-info-text">
+          <div class="branch-info-label">Телефон</div>
+          <div class="branch-info-val"><a href="tel:${b.phone.replace(/\s/g,'')}">${b.phone}</a></div>
+        </div>
+      </div>
+
+      <div class="branch-actions">
+        <a href="${b.mapUrl}" target="_blank" rel="noopener" class="branch-btn branch-btn-2gis">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          ${t('branch_2gis')}
+        </a>
+        <a href="https://wa.me/${b.phone.replace(/[\s+()-]/g,'')}" target="_blank" rel="noopener" class="branch-btn branch-btn-wa">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+          </svg>
+          ${t('branch_wa')}
+        </a>
+        <a href="tel:${b.phone.replace(/\s/g,'')}" class="branch-btn branch-btn-phone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.34A2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l1.83-1.83a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          ${t('branch_call')}
+        </a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------------------------------------------------------------
+   MAP — branch selector
+   --------------------------------------------------------------- */
+const BRANCH_MAPS = [
+  'https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.222%2C%22lon%22%3A76.840%2C%22zoom%22%3A15%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%7D',
+  'https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.256%2C%22lon%22%3A76.928%2C%22zoom%22%3A15%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%7D',
+  'https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.250%2C%22lon%22%3A76.915%2C%22zoom%22%3A15%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%7D',
+];
+
+function selectBranch(index) {
+  // Update active state on address items
+  document.querySelectorAll('.map-address-item').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+
+  // Update map iframe
+  const iframe = document.getElementById('mapIframe');
+  if (iframe) iframe.src = BRANCH_MAPS[index];
+}
+
+/* ---------------------------------------------------------------
+   CART SIDEBAR
+   --------------------------------------------------------------- */
+function toggleCart() {
+  const sidebar  = document.getElementById('cartSidebar');
+  const overlay  = document.getElementById('cartOverlay');
+  const isOpen   = sidebar.classList.toggle('open');
+
+  overlay.classList.toggle('open', isOpen);
+  sidebar.setAttribute('aria-hidden', String(!isOpen));
+
+  if (isOpen) {
+    renderCartItems();
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+}
+
+function renderCartItems() {
+  const container = document.getElementById('cartItems');
+  const footer    = document.getElementById('cartFooter');
+  if (!container || !footer) return;
+
+  const keys = Object.keys(cart).filter(id => cart[id] > 0);
+
+  if (keys.length === 0) {
+    container.innerHTML = `
+      <div class="cart-empty-state">
+        <div class="cart-empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+        </div>
+        <p class="cart-empty-text">${t('cart_empty')}</p>
+      </div>`;
+    footer.style.display = 'none';
+    return;
+  }
+
+  let total = 0;
+  container.innerHTML = keys.map(id => {
+    const item = MENU.find(m => m.id === +id);
+    if (!item) return '';
+    const sub  = item.price * cart[id];
+    total += sub;
+    const name = item.name[currentLang] || item.name.kk;
+    const img  = item.img
+      ? `<img class="cart-item-img" src="${item.img}" alt="${name}"
+             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNlZGU4ZGYiLz48cGF0aCBkPSJNMzIgMjJMMjIgMjdWMzdMMzIgNDJMNDIgMzdWMjdMMzIgMjJaIiBzdHJva2U9IiM3YWFhODgiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg=='"/>`
+      : `<div class="cart-item-img" style="background:var(--parchment); display:flex; align-items:center; justify-content:center;">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7aaa88" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+             <path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
+           </svg>
+         </div>`;
+
+    return `<div class="cart-item">
+      ${img}
+      <div class="cart-item-info">
+        <div class="cart-item-name">${name}</div>
+        <div class="cart-item-price">${item.price.toLocaleString()} ₸ × ${cart[id]} = ${sub.toLocaleString()} ₸</div>
+      </div>
+      <div class="cart-item-qty">
+        <button class="cart-qty-btn" onclick="changeQty(${id}, -1)">−</button>
+        <span class="cart-qty-num">${cart[id]}</span>
+        <button class="cart-qty-btn" onclick="changeQty(${id}, +1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('cartTotal').textContent = total.toLocaleString() + ' ₸';
+  footer.style.display = 'block';
+}
+
+/* ---------------------------------------------------------------
+   CHECKOUT MODAL
+   --------------------------------------------------------------- */
+function checkout() {
+  // Close cart
+  const sidebar = document.getElementById('cartSidebar');
+  const overlay = document.getElementById('cartOverlay');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+
+  // Build summary
+  const keys = Object.keys(cart).filter(id => cart[id] > 0);
+  let total   = 0;
+  const summaryEl = document.getElementById('modalSummary');
+
+  if (summaryEl) {
+    let html = `<div class="order-summary-title">${t('order_items_title')}</div>`;
+    keys.forEach(id => {
+      const item = MENU.find(m => m.id === +id);
+      if (!item) return;
+      const sub  = item.price * cart[id];
+      total += sub;
+      const name = item.name[currentLang] || item.name.kk;
+      html += `<div class="summary-item">
+        <span class="summary-item-name">${name} ×${cart[id]}</span>
+        <span class="summary-item-price">${sub.toLocaleString()} ₸</span>
+      </div>`;
+    });
+    html += `<div class="summary-total">
+      <span>${t('summary_total')}</span>
+      <span class="summary-total-num">${total.toLocaleString()} ₸</span>
+    </div>`;
+    summaryEl.innerHTML = html;
+  }
+
+  // Refresh branch select
+  const sel = document.getElementById('orderBranch');
+  if (sel) {
+    sel.innerHTML = `<option value="">${t('order_branch_ph')}</option>` +
+      BRANCHES.map(b => `<option value="${b.id}">${b.name[currentLang] || b.name.kk}</option>`).join('');
+  }
+
+  // Show modal
+  const modal = document.getElementById('orderModal');
+  modal.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  const modal = document.getElementById('orderModal');
+  modal.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+/* ---------------------------------------------------------------
+   DELIVERY TOGGLE
+   --------------------------------------------------------------- */
+function setupDeliveryToggle() {
+  document.querySelectorAll('input[name="otype"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const addrEl = document.getElementById('orderAddress');
+      if (addrEl) {
+        addrEl.style.display = radio.value === 'delivery' ? 'block' : 'none';
+      }
+    });
+  });
+}
+
+/* ---------------------------------------------------------------
+   SUBMIT ORDER
+   --------------------------------------------------------------- */
+async function submitOrder() {
+  const name     = document.getElementById('orderName').value.trim();
+  const phone    = document.getElementById('orderPhone').value.trim();
+  const branchEl = document.getElementById('orderBranch');
+  const branchId = branchEl.value;
+  const brName   = branchEl.options[branchEl.selectedIndex]?.text || '';
+  const type     = document.querySelector('input[name="otype"]:checked')?.value || 'pickup';
+  const address  = document.getElementById('orderAddrInput')?.value.trim() || '';
+  const payEl    = document.getElementById('orderPay');
+  const pay      = payEl ? payEl.value : 'cash';
+
+  if (!name || !phone) { showToast(t('order_fill')); return; }
+  if (!branchId)        { showToast(t('order_select_br')); return; }
+
+  const items = Object.keys(cart)
+    .filter(id => cart[id] > 0)
+    .map(id => {
+      const item = MENU.find(m => m.id === +id);
+      return item
+        ? { id: +id, name: item.name[currentLang] || item.name.kk, price: item.price, qty: cart[id] }
+        : null;
+    })
+    .filter(Boolean);
+
+  if (!items.length) { showToast(t('cart_empty')); return; }
+
+  const total   = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const payload = { name, phone, branch: branchId, branchName: brName, type, address, items, total, pay, lang: currentLang };
+
+  const btn = document.querySelector('#orderModal .modal-submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+
+  try {
+    const res  = await fetch(`${API_BASE}/api/order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (data.ok) { onOrderSuccess(); }
+    else { showToast('Қате: ' + (data.message || 'server error')); }
+  } catch (_) {
+    // Offline fallback — persist locally
+    try {
+      const pending = JSON.parse(localStorage.getItem('toiypall_pending') || '[]');
+      pending.push({ ...payload, createdAt: new Date().toISOString() });
+      localStorage.setItem('toiypall_pending', JSON.stringify(pending));
+    } catch (e) { /* ignore */ }
+    onOrderSuccess();
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = t('order_submit'); }
+  }
+}
+
+function onOrderSuccess() {
+  closeModal();
+  cart = {};
+  updateCartUI();
+  renderCartItems();
+  showToast(t('toast_order'));
+  ['orderName', 'orderPhone', 'orderAddrInput'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+
+/* ---------------------------------------------------------------
+   TOAST
+   --------------------------------------------------------------- */
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+/* ---------------------------------------------------------------
+   NAVBAR SCROLL
+   --------------------------------------------------------------- */
+function initNavbarScroll() {
+  const nav = document.getElementById('navbar');
+  if (!nav) return;
+
+  const handler = () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  };
+  window.addEventListener('scroll', handler, { passive: true });
+  handler(); // initial check
+}
+
+/* ---------------------------------------------------------------
+   MOBILE NAV
+   --------------------------------------------------------------- */
+function toggleMobileNav() {
+  const nav    = document.getElementById('mobileNav');
+  const burger = document.getElementById('burgerBtn');
+  const open   = nav.classList.toggle('open');
+  burger.classList.toggle('open', open);
+  burger.setAttribute('aria-expanded', String(open));
+  nav.setAttribute('aria-hidden', String(!open));
+}
+
+function closeMobileNav() {
+  const nav    = document.getElementById('mobileNav');
+  const burger = document.getElementById('burgerBtn');
+  nav.classList.remove('open');
+  burger.classList.remove('open');
+  burger.setAttribute('aria-expanded', 'false');
+  nav.setAttribute('aria-hidden', 'true');
+}
+
+/* ---------------------------------------------------------------
+   INTERSECTION OBSERVER — scroll reveals
+   --------------------------------------------------------------- */
+function initReveal() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    return;
+  }
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+/* ---------------------------------------------------------------
+   KEYBOARD SHORTCUTS
+   --------------------------------------------------------------- */
+function initKeyboard() {
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeModal();
+      const sidebar = document.getElementById('cartSidebar');
+      if (sidebar.classList.contains('open')) toggleCart();
+      closeMobileNav();
+    }
+  });
+}
+
+/* ---------------------------------------------------------------
+   MODAL BACKDROP CLICK
+   --------------------------------------------------------------- */
+function initModalBackdrop() {
+  const modal = document.getElementById('orderModal');
+  if (modal) {
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeModal();
+    });
+  }
+}
+
+/* ---------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  setLang('kk');
+  renderCategoryTabs();
+  renderMenuGrid('all');
+  renderBranches();
+  updateCartUI();
+
+  initNavbarScroll();
+  initReveal();
+  initKeyboard();
+  initModalBackdrop();
+  setupDeliveryToggle();
+});
+
+/* Expose globals for inline HTML callbacks */
+window.setLang        = setLang;
+window.selectCategory = selectCategory;
+window.addToCart      = addToCart;
+window.changeQty      = changeQty;
+window.toggleCart     = toggleCart;
+window.checkout       = checkout;
+window.closeModal     = closeModal;
+window.submitOrder    = submitOrder;
+window.toggleMobileNav= toggleMobileNav;
+window.closeMobileNav = closeMobileNav;
+window.selectBranch   = selectBranch;
+</script>
+
+</body>
+</html>
