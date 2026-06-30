@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="kk">
 <head>
@@ -11,6 +12,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KZ:wght@400;700&display=swap" rel="stylesheet"/>
+
+<!-- Leaflet (free OSM map, no API key needed) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
 <style>
 /* ================================================================
@@ -95,6 +100,8 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -103,6 +110,7 @@ body {
   color: var(--text);
   line-height: 1.65;
   overflow-x: hidden;
+  max-width: 100%;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -383,15 +391,30 @@ ul, ol { list-style: none; }
 }
 
 .nav-logo-mark {
-  width: 42px; height: 42px;
+  width: 44px; height: 44px;
   background: var(--accent);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 10px rgba(193,123,42,.35);
+}
+
+.nav-logo-mark-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.nav-logo-mark-fallback {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--white);
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-logo-mark svg {
@@ -599,13 +622,14 @@ ul, ol { list-style: none; }
    ================================================================ */
 #hero {
   min-height: 100vh;
+  min-height: 100svh;
   background: var(--ink-deep);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: calc(var(--nav-h) + 40px) 24px 60px;
+  padding: calc(var(--nav-h) + 40px) 24px 100px;
   position: relative;
   overflow: hidden;
 }
@@ -754,8 +778,9 @@ ul, ol { list-style: none; }
   left: 0;
   right: 0;
   height: 60px;
-  z-index: 2;
+  z-index: 1;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .hero-divider svg {
@@ -919,8 +944,8 @@ ul, ol { list-style: none; }
 /* Menu grid */
 #menuGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 /* Menu card */
@@ -942,7 +967,7 @@ ul, ol { list-style: none; }
 
 .card-media {
   position: relative;
-  height: 200px;
+  height: 160px;
   overflow: hidden;
   background: var(--parchment);
   flex-shrink: 0;
@@ -988,7 +1013,7 @@ ul, ol { list-style: none; }
 }
 
 .card-body {
-  padding: 18px 18px 18px;
+  padding: 14px 14px 14px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -1520,13 +1545,30 @@ ul, ol { list-style: none; }
   min-height: 420px;
 }
 
-.map-embed iframe {
+.map-embed iframe,
+#leafletMap {
   width: 100%;
   height: 100%;
   min-height: 420px;
   border: none;
   display: block;
 }
+
+.leaflet-toiyp-pin .pin-dot {
+  width: 22px; height: 22px;
+  border: 3px solid var(--white);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+
+.leaflet-toiyp-pin .pin-dot.pin-open   { background: #1a6b3c; }
+.leaflet-toiyp-pin .pin-dot.pin-closed { background: #c0392b; }
+
+.leaflet-popup-content { font-family: var(--font-body); font-size: .85rem; }
+.popup-status { font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .03em; }
+.popup-status.is-open   { color: #1a6b3c; }
+.popup-status.is-closed { color: #c0392b; }
 
 /* ================================================================
    PAYMENT SECTION
@@ -1792,6 +1834,21 @@ ul, ol { list-style: none; }
   background: var(--accent);
   border-radius: var(--r-sm);
   display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.footer-logo-mark img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.footer-logo-mark-fallback {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--white);
   align-items: center;
   justify-content: center;
 }
@@ -2499,8 +2556,19 @@ ul, ol { list-style: none; }
 
   /* Menu */
   #menuGrid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px;
+  }
+  .card-media { height: 130px; }
+  .card-body { padding: 12px 12px 12px; }
+
+  /* About image — show more of the photo on small screens, don't let badge get clipped */
+  .about-img-frame { aspect-ratio: 4 / 3; }
+  .about-float-card {
+    right: 12px;
+    bottom: -16px;
+    padding: 16px 20px;
+    min-width: 120px;
   }
 
   /* Branches */
@@ -2633,6 +2701,21 @@ ul, ol { list-style: none; }
 .halal-strip {
   background: linear-gradient(90deg, var(--forest-mid) 0%, var(--forest) 100%);
   padding: 16px 24px;
+  position: relative;
+}
+
+.halal-strip-divider {
+  position: relative;
+  height: 44px;
+  margin-top: -1px;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--forest-mid) 0%, var(--forest) 100%);
+}
+
+.halal-strip-divider svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .halal-strip-inner {
@@ -2739,11 +2822,8 @@ ul, ol { list-style: none; }
     <!-- Logo -->
     <a href="#hero" class="nav-logo" aria-label="ToiypAll — Басты бет">
       <div class="nav-logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-          <path d="M2 17l10 5 10-5"/>
-          <path d="M2 12l10 5 10-5"/>
-        </svg>
+        <img src="https://minio.daladev.kz/tips/companies/logos/01K5GY19A65E1CY3PZ6S6MX3NT_optimized.webp" alt="ToiypAll логотипі" class="nav-logo-mark-img" data-retries="0" onerror="var n=parseInt(this.dataset.retries||'0',10); if(n&lt;2){this.dataset.retries=n+1; var s=this.src; this.src=''; var self=this; setTimeout(function(){self.src=s;},400);} else {this.style.display='none'; this.nextElementSibling.style.display='flex';}"/>
+        <span class="nav-logo-mark-fallback" style="display:none;">TA</span>
       </div>
       <div class="nav-logo-text">
         <span class="nav-logo-main">ToiypAll</span>
@@ -2818,19 +2898,6 @@ ul, ol { list-style: none; }
       <span class="hero-halal-dot"></span>
     </div>
 
-    <!-- Logo -->
-    <div class="hero-logo-wrap">
-      <div class="hero-logo-ring">
-        <img 
-          src="https://minio.daladev.kz/tips/companies/logos/01K5GY19A65E1CY3PZ6S6MX3NT_optimized.webp"
-          alt="ToiypAll логотипі"
-          class="hero-logo-img"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
-        <div class="hero-logo-placeholder" style="display:none;">TA</div>
-      </div>
-    </div>
-
     <!-- Title -->
     <h1 class="hero-title">ToiypAll</h1>
     <p class="hero-title-sub" data-i18n="hero_tagline">Отбасылық халал дәстүр</p>
@@ -2863,13 +2930,6 @@ ul, ol { list-style: none; }
         <span class="metric-label" data-i18n="stat_hours">Жұмыс сағаты</span>
       </div>
     </div>
-  </div>
-
-  <!-- Bottom curve -->
-  <div class="hero-divider">
-    <svg viewBox="0 0 1440 60" preserveAspectRatio="none" fill="var(--cream)">
-      <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z"/>
-    </svg>
   </div>
 </section>
 
@@ -2916,6 +2976,12 @@ ul, ol { list-style: none; }
       <span data-i18n="strip_branches">3 филиал Алматыда</span>
     </div>
   </div>
+</div>
+
+<div class="halal-strip-divider">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+    <path d="M0,0 C360,60 1080,60 1440,0 L1440,60 L0,60 Z" fill="var(--cream)"/>
+  </svg>
 </div>
 
 <!-- ================================================================
@@ -3119,13 +3185,7 @@ ul, ol { list-style: none; }
 
       <!-- Map embed -->
       <div class="map-embed reveal reveal-delay-1" id="mapEmbed">
-        <iframe
-          id="mapIframe"
-          src="https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.2565%2C%22lon%22%3A76.9286%2C%22zoom%22%3A12%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%7D"
-          allowfullscreen
-          loading="lazy"
-          title="ToiypAll Алматы картасы"
-        ></iframe>
+        <div id="leafletMap" role="img" aria-label="ToiypAll Алматы картасы"></div>
       </div>
 
     </div>
@@ -3315,11 +3375,8 @@ ul, ol { list-style: none; }
       <div class="footer-brand">
         <div class="footer-logo">
           <div class="footer-logo-mark">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-              <path d="M2 17l10 5 10-5"/>
-              <path d="M2 12l10 5 10-5"/>
-            </svg>
+            <img src="https://minio.daladev.kz/tips/companies/logos/01K5GY19A65E1CY3PZ6S6MX3NT_optimized.webp" alt="ToiypAll" data-retries="0" onerror="var n=parseInt(this.dataset.retries||'0',10); if(n&lt;2){this.dataset.retries=n+1; var s=this.src; this.src=''; var self=this; setTimeout(function(){self.src=s;},400);} else {this.style.display='none'; this.nextElementSibling.style.display='flex';}"/>
+            <span class="footer-logo-mark-fallback" style="display:none;">TA</span>
           </div>
           <span class="footer-logo-name">ToiypAll</span>
         </div>
@@ -4022,9 +4079,9 @@ const BRANCHES = [
     phone: '+7 706 622 0000',
     hours: { kk: '24/7', ru: '24/7' },
     mapUrl: 'https://2gis.kz/almaty/search/%D0%A2%D0%BE%D0%B9%D1%8B%D0%BF%20%D0%90%D0%BB%D0%BB/49.834,73.100',
-    coords: { lat: 43.222, lon: 76.840 },
-    openHour: 24,
-    closeHour: 0,
+    coords: { lat: 43.232572, lon: 76.797001 },
+    openHour: 0,
+    closeHour: 24,
   },
   {
     id: 'jandosov',
@@ -4033,9 +4090,9 @@ const BRANCHES = [
     phone: '+7 707 617 0337',
     hours: { kk: '10:00 - 01:00', ru: '10:00 - 01:00' },
     mapUrl: 'https://2gis.kz/almaty/search/%D0%96%D0%B0%D0%BD%D0%B4%D0%BE%D1%81%D0%BE%D0%B2%D0%B0%20299',
-    coords: { lat: 43.256, lon: 76.928 },
-    openHour: 15,
-    closeHour: 9,
+    coords: { lat: 43.202655, lon: 76.851050 },
+    openHour: 10,
+    closeHour: 1,
   },
   {
     id: 'sharipov',
@@ -4044,9 +4101,9 @@ const BRANCHES = [
     phone: '+7 706 622 0000',
     hours: { kk: '10:00 - 00:00', ru: '10:00 - 00:00' },
     mapUrl: 'https://2gis.kz/almaty/search/%D0%90%D0%B4%D0%B8%20%D0%A8%D0%B0%D1%80%D0%B8%D0%BF%D0%BE%D0%B2%D0%B0%20118',
-    coords: { lat: 43.250, lon: 76.915 },
-    openHour: 14,
-    closeHour: 10,
+    coords: { lat: 43.242449, lon: 76.923901 },
+    openHour: 10,
+    closeHour: 24,
   },
 ];
 
@@ -4246,9 +4303,11 @@ function updateCartUI() {
    BRANCHES RENDER
    --------------------------------------------------------------- */
 function isOpen(branch) {
-  const now = new Date();
-  const h   = now.getHours();
-  return h >= branch.openHour && h < branch.closeHour;
+  const h = new Date().getHours();
+  const { openHour, closeHour } = branch;
+  if (openHour === 0 && closeHour === 24) return true; // 24/7
+  if (openHour < closeHour) return h >= openHour && h < closeHour;
+  return h >= openHour || h < closeHour; // wraps past midnight
 }
 
 function renderBranches() {
@@ -4338,11 +4397,39 @@ function renderBranches() {
 /* ---------------------------------------------------------------
    MAP — branch selector
    --------------------------------------------------------------- */
-const BRANCH_MAPS = [
-  'https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.222%2C%22lon%22%3A76.840%2C%22zoom%22%3A15%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%7D',
-  'https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.256%2C%22lon%22%3A76.928%2C%22zoom%22%3A15%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%7D',
-  'https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.250%2C%22lon%22%3A76.915%2C%22zoom%22%3A15%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%7D',
-];
+let leafletMap = null;
+let leafletMarkers = [];
+
+function initLeafletMap() {
+  const el = document.getElementById('leafletMap');
+  if (!el || typeof L === 'undefined') return;
+
+  leafletMap = L.map(el, { scrollWheelZoom: false }).setView([43.2389, 76.8897], 11);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap',
+    maxZoom: 19,
+  }).addTo(leafletMap);
+
+  const makeIcon = (open) => L.divIcon({
+    className: 'leaflet-toiyp-pin',
+    html: `<div class="pin-dot ${open ? 'pin-open' : 'pin-closed'}"></div>`,
+    iconSize: [26, 26],
+    iconAnchor: [13, 13],
+  });
+
+  leafletMarkers = BRANCHES.map((b, i) => {
+    const open = isOpen(b);
+    const marker = L.marker([b.coords.lat, b.coords.lon], { icon: makeIcon(open) }).addTo(leafletMap);
+    const statusText = open ? (t('open_now') || 'Ашық') : (t('closed_now') || 'Жабық');
+    marker.bindPopup(`<strong>${b.name[currentLang] || b.name.kk}</strong><br>${b.address[currentLang] || b.address.kk}<br><span class="popup-status ${open ? 'is-open' : 'is-closed'}">${statusText}</span>`);
+    marker.on('click', () => selectBranch(i));
+    return marker;
+  });
+
+  const group = L.featureGroup(leafletMarkers);
+  if (leafletMarkers.length) leafletMap.fitBounds(group.getBounds().pad(0.3));
+}
 
 function selectBranch(index) {
   // Update active state on address items
@@ -4350,9 +4437,13 @@ function selectBranch(index) {
     el.classList.toggle('active', i === index);
   });
 
-  // Update map iframe
-  const iframe = document.getElementById('mapIframe');
-  if (iframe) iframe.src = BRANCH_MAPS[index];
+  // Fly to marker on the Leaflet map
+  const b = BRANCHES[index];
+  if (leafletMap && b) {
+    leafletMap.flyTo([b.coords.lat, b.coords.lon], 15, { duration: 0.8 });
+    const marker = leafletMarkers[index];
+    if (marker) marker.openPopup();
+  }
 }
 
 /* ---------------------------------------------------------------
@@ -4678,6 +4769,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initKeyboard();
   initModalBackdrop();
   setupDeliveryToggle();
+  initLeafletMap();
 });
 
 /* Expose globals for inline HTML callbacks */
