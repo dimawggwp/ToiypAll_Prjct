@@ -34,6 +34,8 @@
   --spice:       #c17b2a;
   --spice-warm:  #e8963a;
   --spice-pale:  #fdf3e4;
+  --gold:        #c9a13b;
+  --gold-light:  #e6c875;
   --white:       #ffffff;
   --muted:       #8a9490;
   --muted-dark:  #4a5a50;
@@ -2847,7 +2849,7 @@ ul, ol { list-style: none; }
 .admin-row-img img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; background: var(--parchment); }
 .admin-row-name { font-weight: 600; }
 .admin-row-name .sub { font-weight: 400; color: var(--muted-dark); font-size: .76rem; }
-.admin-row-actions { display: flex; gap: 6px; white-space: nowrap; }
+.admin-row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .admin-empty { text-align: center; padding: 36px 10px; color: var(--muted-dark); font-size: .88rem; }
 
@@ -2940,11 +2942,11 @@ ul, ol { list-style: none; }
   justify-content: center;
   width: 38px; height: 38px;
   border-radius: 50%;
-  color: var(--ink);
-  transition: background var(--dur-sm);
+  color: var(--gold);
+  transition: background var(--dur-sm), color var(--dur-sm);
 }
 
-.nav-cabinet-btn:hover { background: var(--cream); }
+.nav-cabinet-btn:hover { background: var(--cream); color: var(--gold-light); }
 .nav-cabinet-btn svg { width: 19px; height: 19px; }
 
 /* ================================================================
@@ -4208,6 +4210,13 @@ ul, ol { list-style: none; }
    --------------------------------------------------------------- */
 const API_BASE = window.API_BASE || 'http://localhost:3000';
 
+/* Establishment's WhatsApp number — orders are sent here as a
+   prefilled wa.me message, the same mechanism used on the
+   toiypall.qrpay.kz storefront. Staff read the message and enter
+   the order into iiko manually; there is no direct iiko API call
+   from the browser (qrpay.kz doesn't expose one either). */
+const ORDER_WHATSAPP_PHONE = '+77076170337';
+
 /* ---------------------------------------------------------------
    TRANSLATIONS
    --------------------------------------------------------------- */
@@ -4378,6 +4387,9 @@ const TRANSLATIONS = {
     admin_th_actions:   'Әрекет',
     admin_edit:          'Өзгерту',
     admin_delete:         'Жою',
+    admin_change_price:   'Бағасын өзгерту',
+    admin_change_price_prompt: 'Жаңа бағасын енгізіңіз (₸):',
+    admin_price_invalid:  'Бағасы дұрыс емес',
     admin_empty:          'Тағамдар табылмады',
     admin_export:         'Экспорт (JSON)',
     admin_import:         'Импорт (JSON)',
@@ -4621,6 +4633,9 @@ const TRANSLATIONS = {
     admin_th_actions:   'Действие',
     admin_edit:          'Изменить',
     admin_delete:         'Удалить',
+    admin_change_price:   'Изменить цену',
+    admin_change_price_prompt: 'Введите новую цену (₸):',
+    admin_price_invalid:  'Некорректная цена',
     admin_empty:          'Блюда не найдены',
     admin_export:         'Экспорт (JSON)',
     admin_import:         'Импорт (JSON)',
@@ -6169,6 +6184,7 @@ function adminTableRowsHtml() {
         <td>${(it.price || 0).toLocaleString()} ₸</td>
         <td class="admin-row-actions">
           <button class="btn btn-ghost btn-sm" onclick="adminOpenItemModal(${it.id})">${t('admin_edit')}</button>
+          <button class="btn btn-outline btn-sm" onclick="adminChangePrice(${it.id})">${t('admin_change_price')}</button>
           <button class="btn btn-outline btn-sm" onclick="adminToggleAvailability(${it.id})">${soldOut ? t('admin_mark_available') : t('admin_mark_soldout')}</button>
           <button class="btn btn-outline btn-sm" onclick="adminDeleteItem(${it.id})">${t('admin_delete')}</button>
         </td>
@@ -6235,6 +6251,24 @@ function adminToggleAvailability(id) {
   persistMenu();
   adminRefreshTable();
   showToast(MENU[idx].available === false ? t('admin_save_ok') : t('admin_save_ok'));
+}
+
+function adminChangePrice(id) {
+  const idx = MENU.findIndex(m => m.id === id);
+  if (idx === -1) return;
+  const current = MENU[idx].price || 0;
+  const input = prompt(t('admin_change_price_prompt'), current);
+  if (input === null) return; // cancelled
+  const cleaned = String(input).replace(/[^\d.]/g, '');
+  const newPrice = Math.round(parseFloat(cleaned));
+  if (!cleaned || isNaN(newPrice) || newPrice < 0) {
+    showToast(t('admin_price_invalid'));
+    return;
+  }
+  MENU[idx] = { ...MENU[idx], price: newPrice };
+  persistMenu();
+  adminRefreshTable();
+  showToast(t('admin_save_ok'));
 }
 
 function adminBindToolbar() {
@@ -6711,6 +6745,59 @@ function processCardPayment() {
 }
 
 /* ---------------------------------------------------------------
+   SEND ORDER TO WHATSAPP
+   The actual "this order goes to the restaurant" channel, mirroring
+   how toiypall.qrpay.kz works: build a formatted text summary and
+   open a wa.me deep link with it prefilled. Staff receive it on
+   WhatsApp and enter it into iiko themselves — same flow as the
+   qrpay storefront, just triggered from our own checkout form.
+   --------------------------------------------------------------- */
+const ORDER_TYPE_LABELS = {
+  kk: { pickup: 'Өзімен алу', delivery: 'Жеткізу' },
+  ru: { pickup: 'Самовывоз', delivery: 'Доставка' },
+};
+
+function buildWhatsAppOrderMessage(payload) {
+  const lang = (payload.lang === 'ru') ? 'ru' : 'kk';
+  const now = new Date();
+  const day   = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const mins  = String(now.getMinutes()).padStart(2, '0');
+  const orderNumber = day + month + String(Math.floor(Math.random() * 100)).padStart(2, '0');
+
+  const heading = lang === 'ru'
+    ? `*Новый заказ #${orderNumber}*\n${hours}:${mins}, ${day}.${month}`
+    : `*Жаңа тапсырыс #${orderNumber}*\n${hours}:${mins}, ${day}.${month}`;
+
+  const typeLabel = (ORDER_TYPE_LABELS[lang] || ORDER_TYPE_LABELS.kk)[payload.type] || payload.type;
+  const payLabel  = t(`pay${ { card: 1, kaspi_qr: 2, cash: 3, transfer: 4 }[payload.pay] || 3 }_name`);
+
+  let msg = heading + '\n\n';
+  msg += (lang === 'ru' ? '*Филиал:* ' : '*Филиал:* ') + payload.branchName + '\n';
+  msg += (lang === 'ru' ? '*Тип заказа:* ' : '*Тапсырыс түрі:* ') + typeLabel + '\n';
+  msg += (lang === 'ru' ? '*Способ оплаты:* ' : '*Төлем тәсілі:* ') + payLabel + '\n\n';
+  msg += (lang === 'ru' ? '*Клиент:* ' : '*Клиент:* ') + payload.name + '\n';
+  msg += (lang === 'ru' ? '*Телефон:* ' : '*Телефон:* ') + payload.phone + '\n';
+  if (payload.type === 'delivery' && payload.address) {
+    msg += (lang === 'ru' ? '*Адрес доставки:* ' : '*Жеткізу мекенжайы:* ') + payload.address + '\n';
+  }
+  msg += '\n' + (lang === 'ru' ? '*Заказ:*' : '*Тапсырыс:*') + '\n';
+  payload.items.forEach(it => {
+    msg += `• ${it.name} x${it.qty} = ${(it.price * it.qty).toLocaleString()} ₸\n`;
+  });
+  msg += '\n' + (lang === 'ru' ? '*Итого:* ' : '*Барлығы:* ') + payload.total.toLocaleString() + ' ₸';
+
+  return msg;
+}
+
+function sendOrderToWhatsApp(payload) {
+  const message = buildWhatsAppOrderMessage(payload);
+  const cleanNumber = ORDER_WHATSAPP_PHONE.replace(/\D/g, '');
+  window.open('https://wa.me/' + cleanNumber + '?text=' + encodeURIComponent(message), '_blank');
+}
+
+/* ---------------------------------------------------------------
    SUBMIT ORDER
    --------------------------------------------------------------- */
 async function submitOrder() {
@@ -6771,6 +6858,12 @@ async function submitOrder() {
       await processCardPayment();
     }
 
+    // Send the order to the establishment's WhatsApp — this is the
+    // real channel that gets it in front of staff (same as
+    // toiypall.qrpay.kz), independent of whether our own backend
+    // below is reachable.
+    sendOrderToWhatsApp(payload);
+
     const res  = await fetch(`${API_BASE}/api/order`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -6780,7 +6873,10 @@ async function submitOrder() {
     if (data.ok) { saveOrderToHistory(payload); onOrderSuccess(); }
     else { showToast('Қате: ' + (data.message || 'server error')); }
   } catch (_) {
-    // Offline fallback — persist locally (no backend connected yet)
+    // Offline fallback — persist locally (no backend connected yet).
+    // The WhatsApp message above has already been sent regardless,
+    // so the order still reaches the restaurant even if our own
+    // backend is down.
     try {
       const pending = JSON.parse(localStorage.getItem('toiypall_pending') || '[]');
       pending.push({ ...payload, createdAt: new Date().toISOString() });
@@ -6976,6 +7072,7 @@ window.adminExportMenu     = adminExportMenu;
 window.adminImportMenu     = adminImportMenu;
 window.adminResetMenu      = adminResetMenu;
 window.adminToggleAvailability = adminToggleAvailability;
+window.adminChangePrice = adminChangePrice;
 window.adminHandleItemPhoto    = adminHandleItemPhoto;
 window.adminClearPhotoFile     = adminClearPhotoFile;
 window.adminExportOrders       = adminExportOrders;
