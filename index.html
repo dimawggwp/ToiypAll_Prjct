@@ -664,6 +664,7 @@ ul, ol { list-style: none; }
 .hero-content {
   position: relative;
   z-index: 2;
+  width: 100%;
   max-width: 760px;
   margin: 0 auto;
 }
@@ -2569,13 +2570,15 @@ ul, ol { list-style: none; }
 
   /* Hero */
   .hero-metrics {
-    gap: 0;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 0;
+    row-gap: 24px;
   }
 
-  .hero-metric { padding: 0 24px; }
-  .metric-num { font-size: 2rem; }
+  .hero-metric { padding: 0; }
+  .hero-metric + .hero-metric::before { display: none; }
+  .metric-num { font-size: 1.9rem; }
 
   /* Menu */
   #menuGrid {
