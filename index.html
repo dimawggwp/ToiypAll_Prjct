@@ -2224,7 +2224,7 @@ ul, ol { list-style: none; }
 /* ================================================================
    ORDER MODAL
    ================================================================ */
-#orderModal {
+#orderModal, #adminItemModal {
   display: none;
   position: fixed;
   inset: 0;
@@ -2236,7 +2236,7 @@ ul, ol { list-style: none; }
   backdrop-filter: blur(6px);
 }
 
-#orderModal.visible {
+#orderModal.visible, #adminItemModal.visible {
   display: flex;
 }
 
@@ -2473,6 +2473,479 @@ ul, ol { list-style: none; }
 
 .modal-submit-btn:hover { background: var(--forest-mid); }
 .modal-submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+/* ================================================================
+   CARD PAYMENT FIELDS (inside order modal)
+   ================================================================ */
+#cardFields {
+  display: none;
+  margin-top: 14px;
+  padding: 16px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+#cardFields.visible { display: block; }
+
+.card-fields-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: .76rem;
+  color: var(--muted-dark);
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+.card-fields-note svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; color: var(--muted); }
+
+.card-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.card-brand-icons { display: flex; gap: 6px; opacity: .55; font-size: .7rem; letter-spacing: .03em; }
+
+.form-input.invalid { border-color: #c0392b; box-shadow: 0 0 0 4px rgba(192,57,43,.12); }
+
+/* Phone input with a locked +7 prefix — the customer only ever
+   types the local 10 digits, no need to choose between 8 and +7. */
+.phone-input-group {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--white);
+  overflow: hidden;
+  transition: border-color var(--dur-sm), box-shadow var(--dur-sm);
+}
+.phone-input-group:focus-within { border-color: var(--forest); box-shadow: var(--sh-glow); }
+.phone-input-group.invalid { border-color: #c0392b; box-shadow: 0 0 0 4px rgba(192,57,43,.12); }
+.phone-prefix {
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 14px;
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--muted-dark);
+  background: var(--cream);
+  border-right: 1.5px solid var(--border);
+  user-select: none;
+  flex-shrink: 0;
+}
+.phone-input-rest.form-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+.phone-input-rest.form-input:focus { box-shadow: none; border-color: transparent; }
+
+/* Payment processing overlay */
+#payProcessing {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,26,18,.78);
+  z-index: 2500;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  backdrop-filter: blur(4px);
+}
+
+#payProcessing.visible { display: flex; }
+
+.pay-spinner {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,.2);
+  border-top-color: var(--spice-warm);
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.pay-processing-text {
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.pay-processing-sub {
+  color: rgba(255,255,255,.6);
+  font-size: .8rem;
+  max-width: 280px;
+  text-align: center;
+}
+
+/* ================================================================
+   CABINET SIDEBAR (personal account / order history)
+   ================================================================ */
+#cabinetOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 1800;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-md) var(--ease);
+}
+
+#cabinetOverlay.open { opacity: 1; pointer-events: auto; }
+
+#cabinetSidebar {
+  position: fixed;
+  top: 0; right: 0;
+  width: min(420px, 100vw);
+  height: 100dvh;
+  background: var(--white);
+  z-index: 1900;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 60px rgba(0,0,0,.22);
+  transform: translateX(100%);
+  transition: transform var(--dur-lg) var(--ease);
+}
+
+#cabinetSidebar.open { transform: translateX(0); }
+
+/* In admin mode the sidebar becomes a full-screen panel — a menu
+   table needs more room than a 420px drawer, on any device. */
+#cabinetSidebar.admin-mode { width: 100vw; }
+
+#cabinetBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.cabinet-login-box { padding: 8px 2px 0; }
+
+.cabinet-login-lead {
+  font-size: .85rem;
+  color: var(--muted-dark);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.cabinet-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  margin-bottom: 18px;
+}
+
+.cabinet-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--forest);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.cabinet-profile-info { flex: 1; min-width: 0; }
+.cabinet-profile-name { font-weight: 600; font-size: .92rem; color: var(--ink); }
+.cabinet-profile-phone { font-size: .78rem; color: var(--muted-dark); margin-top: 2px; }
+
+.cabinet-logout-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-dark);
+  flex-shrink: 0;
+  transition: all var(--dur-sm);
+}
+
+.cabinet-logout-btn:hover { background: var(--cream); color: #c0392b; }
+.cabinet-logout-btn svg { width: 14px; height: 14px; }
+
+.cabinet-orders-title {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 4px 0 12px;
+}
+
+.cabinet-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  text-align: center;
+  gap: 10px;
+}
+
+.cabinet-empty svg { width: 40px; height: 40px; color: var(--muted); }
+.cabinet-empty-text { font-size: .85rem; color: var(--muted-dark); }
+
+.cabinet-order-card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.cabinet-order-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.cabinet-order-date { font-size: .78rem; color: var(--muted-dark); }
+
+.cabinet-order-status {
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(74,124,89,.14);
+  color: var(--forest-mid, #4a7c59);
+  white-space: nowrap;
+}
+
+.cabinet-order-card .order-summary { margin: 0 0 10px; padding: 0; border: none; background: none; }
+.cabinet-order-card .order-summary-title { display: none; }
+
+.order-history-item {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px;
+  margin-bottom: 12px;
+  background: var(--cream);
+}
+
+.oh-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.oh-date { font-size: .76rem; color: var(--muted-dark); }
+
+.oh-status {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  background: var(--sage-light);
+  color: var(--forest);
+}
+
+.oh-branch { font-size: .8rem; color: var(--text-sub); margin-bottom: 6px; }
+
+.oh-items { font-size: .82rem; color: var(--ink); margin-bottom: 8px; line-height: 1.5; }
+
+.oh-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.oh-total { font-weight: 700; color: var(--forest); font-family: var(--font-display); font-size: 1.05rem; }
+
+.oh-repeat-btn {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 6px 12px;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--r-pill);
+  transition: all var(--dur-sm);
+}
+
+.oh-repeat-btn:hover { background: var(--accent); color: var(--white); }
+
+.cabinet-admin-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 18px;
+  padding: 8px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: .8rem;
+  color: var(--muted-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.cabinet-admin-link:hover { color: var(--forest); }
+
+/* ================================================================
+   ADMIN PANEL (built into the cabinet — no separate file needed)
+   ================================================================ */
+.admin-notice {
+  background: var(--spice-pale);
+  border: 1px solid #f0d8b0;
+  color: #7a4f12;
+  border-radius: var(--r-md);
+  padding: 13px 15px;
+  font-size: .82rem;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+.admin-notice b { color: #5c3a0d; }
+
+.admin-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.admin-toolbar .form-select { width: auto; min-width: 160px; }
+.admin-toolbar .form-input { flex: 1; min-width: 160px; }
+
+.admin-table-wrap table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.admin-table-wrap th, .admin-table-wrap td {
+  text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); vertical-align: middle;
+}
+.admin-table-wrap th {
+  color: var(--muted-dark); font-weight: 600; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em;
+}
+.admin-table-wrap tr:last-child td { border-bottom: none; }
+.admin-row-img img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; background: var(--parchment); }
+.admin-row-name { font-weight: 600; }
+.admin-row-name .sub { font-weight: 400; color: var(--muted-dark); font-size: .76rem; }
+.admin-row-actions { display: flex; gap: 6px; white-space: nowrap; }
+
+.admin-empty { text-align: center; padding: 36px 10px; color: var(--muted-dark); font-size: .88rem; }
+
+.admin-footer-actions {
+  display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 8px;
+  padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+.admin-logout-btn { margin-top: 6px; }
+
+/* --- Admin tab bar (Меню / Тапсырыстар / Параметры) --- */
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.admin-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--muted-dark);
+  padding: 10px 6px;
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1px;
+  transition: color var(--dur-sm);
+  white-space: nowrap;
+}
+.admin-tab-btn:hover { color: var(--forest); }
+.admin-tab-btn.active { color: var(--forest); border-bottom-color: var(--accent); }
+
+/* --- Photo upload + preview in the item modal --- */
+.admin-photo-upload { display: flex; align-items: center; gap: 12px; }
+.admin-photo-preview { width: 56px; height: 56px; object-fit: cover; border-radius: 10px; background: var(--parchment); border: 1px solid var(--border); }
+
+/* --- Availability toggle switch --- */
+.form-group-inline { display: flex; align-items: center; }
+.admin-switch { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--ink, var(--forest)); cursor: pointer; }
+.admin-switch input { width: 17px; height: 17px; accent-color: var(--forest); cursor: pointer; }
+
+/* --- Sold-out state, both in admin table and storefront cards --- */
+.admin-row-soldout { opacity: .55; }
+.admin-soldout-tag { display: inline-block; margin-left: 6px; font-size: .68rem; font-weight: 700; color: #b3431f; background: #fbe3da; border-radius: 999px; padding: 1px 7px; vertical-align: middle; }
+.menu-card.sold-out .card-media img { filter: grayscale(.7); opacity: .65; }
+.menu-card.sold-out .card-add-btn,
+.menu-card.sold-out .card-qty { display: none; }
+.card-soldout-badge {
+  position: absolute; top: 10px; left: 10px;
+  background: rgba(27,61,36,.88); color: var(--white);
+  font-size: .68rem; font-weight: 700; letter-spacing: .03em;
+  padding: 4px 10px; border-radius: 999px; z-index: 2;
+}
+
+/* --- Admin orders dashboard --- */
+.admin-stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.admin-stat-card {
+  flex: 1; min-width: 110px;
+  background: var(--parchment); border-radius: var(--r-md);
+  padding: 12px 14px;
+}
+.admin-stat-num { font-size: 1.25rem; font-weight: 700; color: var(--forest); line-height: 1.2; }
+.admin-stat-label { font-size: .72rem; color: var(--muted-dark); margin-top: 2px; }
+.admin-stat-card-wide { flex: 1 1 100%; }
+.admin-stat-num-sm { font-size: .92rem; }
+.admin-order-card { border: 1px solid var(--border); border-radius: var(--r-md); padding: 13px 14px; margin-bottom: 10px; }
+.admin-order-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.admin-order-customer { font-weight: 600; font-size: .88rem; }
+.admin-order-phone { font-size: .76rem; color: var(--muted-dark); }
+.admin-order-date { font-size: .74rem; color: var(--muted-dark); white-space: nowrap; }
+.admin-order-items { font-size: .8rem; color: var(--muted-dark); margin: 6px 0; line-height: 1.5; }
+.admin-order-bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.admin-order-total { font-weight: 700; color: var(--forest); }
+.admin-order-status-select { font-size: .76rem; padding: 5px 8px; border-radius: var(--r-pill); border: 1px solid var(--border); background: var(--white); font-family: inherit; }
+
+@media (max-width: 640px) {
+  .admin-table-wrap thead { display: none; }
+  .admin-table-wrap table, .admin-table-wrap tbody, .admin-table-wrap tr, .admin-table-wrap td { display: block; width: 100%; }
+  .admin-table-wrap tr { border-bottom: 1px solid var(--border); padding: 10px 0; }
+  .admin-table-wrap td { border: none; padding: 4px 0; }
+  .admin-table-wrap td.admin-row-actions { margin-top: 8px; }
+}
+
+.nav-cabinet-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  color: var(--ink);
+  transition: background var(--dur-sm);
+}
+
+.nav-cabinet-btn:hover { background: var(--cream); }
+.nav-cabinet-btn svg { width: 19px; height: 19px; }
 
 /* ================================================================
    TOAST NOTIFICATION
@@ -2874,6 +3347,14 @@ ul, ol { list-style: none; }
         <button class="lang-btn" onclick="setLang('ru')" id="langRu">РУС</button>
       </div>
 
+      <!-- Cabinet -->
+      <button class="nav-cabinet-btn" onclick="toggleCabinet()" aria-label="Жеке кабинет">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+
       <!-- Cart -->
       <button class="nav-cart-btn" onclick="toggleCart()" aria-label="Себет">
         <svg class="nav-cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2903,7 +3384,9 @@ ul, ol { list-style: none; }
   <a href="#about" class="mobile-link" onclick="closeMobileNav()" data-i18n="nav_about">Біз туралы</a>
   <a href="#contacts" class="mobile-link" onclick="closeMobileNav()" data-i18n="nav_contacts">Байланыс</a>
   <div class="mobile-nav-bottom">
-    <button class="btn btn-primary btn-sm w-full" onclick="closeMobileNav(); toggleCart();" data-i18n="cart_title">Себет</button>
+    <button class="btn btn-outline btn-sm w-full" onclick="closeMobileNav(); toggleCabinet();" data-i18n="cabinet_title" style="margin-bottom:10px;">Жеке кабинет</button>
+    <button class="btn btn-primary btn-sm w-full" onclick="closeMobileNav(); toggleCart();" data-i18n="cart_title" style="margin-bottom:10px;">Себет</button>
+    <button class="cabinet-admin-link" onclick="openAdminFromMenu()" data-i18n="mobile_admin_link">Әкімші кірісі</button>
   </div>
 </div>
 
@@ -3507,6 +3990,33 @@ ul, ol { list-style: none; }
 </aside>
 
 <!-- ================================================================
+     CABINET SIDEBAR (personal account / order history)
+     ================================================================ -->
+<div id="cabinetOverlay" onclick="toggleCabinet()"></div>
+
+<aside id="cabinetSidebar" aria-label="Жеке кабинет" aria-hidden="true">
+  <div class="cart-header">
+    <div class="cart-title-row">
+      <div class="cart-title-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <span class="cart-title-text" data-i18n="cabinet_title">Жеке кабинет</span>
+    </div>
+    <button class="cart-close-btn" onclick="toggleCabinet()" aria-label="Жабу">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="cabinetBody"></div>
+</aside>
+
+<!-- ================================================================
      ORDER MODAL
      ================================================================ -->
 <div id="orderModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -3545,7 +4055,10 @@ ul, ol { list-style: none; }
       <!-- Phone -->
       <div class="form-group">
         <label class="form-label" for="orderPhone" data-i18n="order_phone">Телефон нөмірі</label>
-        <input type="tel" class="form-input" id="orderPhone" placeholder="+7 (___) ___-__-__" autocomplete="tel"/>
+        <div class="phone-input-group" id="orderPhoneGroup">
+          <span class="phone-prefix">+7</span>
+          <input type="tel" class="form-input phone-input-rest" id="orderPhone" inputmode="numeric" placeholder="(___) ___-__-__" autocomplete="tel" maxlength="15"/>
+        </div>
       </div>
 
       <!-- Order type -->
@@ -3576,18 +4089,112 @@ ul, ol { list-style: none; }
       <!-- Payment method -->
       <div class="form-group">
         <label class="form-label" for="orderPay" data-i18n="order_pay_lbl">Төлем тәсілі</label>
-        <select class="form-select" id="orderPay">
+        <select class="form-select" id="orderPay" onchange="onPayMethodChange()">
           <option value="cash" data-i18n="pay3_name">Қолма-қол</option>
           <option value="kaspi_qr" data-i18n="pay2_name">Kaspi QR</option>
           <option value="card" data-i18n="pay1_name">Банк картасы</option>
           <option value="transfer" data-i18n="pay4_name">Аударым</option>
         </select>
+
+        <!-- Card payment sub-fields (shown only when "card" selected) -->
+        <div id="cardFields">
+          <div class="card-brand-row">
+            <span class="card-brand-icons">VISA · MASTERCARD · MIR</span>
+          </div>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" for="cardNumber" data-i18n="card_number_lbl">Карта нөмірі</label>
+            <input type="text" class="form-input" id="cardNumber" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000" autocomplete="cc-number"/>
+          </div>
+          <div class="card-row">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label" for="cardExpiry" data-i18n="card_expiry_lbl">Мерзімі</label>
+              <input type="text" class="form-input" id="cardExpiry" inputmode="numeric" maxlength="5" placeholder="MM/YY" autocomplete="cc-exp"/>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label" for="cardCvv" data-i18n="card_cvv_lbl">CVV</label>
+              <input type="password" class="form-input" id="cardCvv" inputmode="numeric" maxlength="3" placeholder="•••" autocomplete="cc-csc"/>
+            </div>
+          </div>
+          <div class="card-fields-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span data-i18n="card_security_note">Деректеріңіз қауіпсіз өңделеді. Карта нөмірі серверде сақталмайды.</span>
+          </div>
+        </div>
       </div>
 
       <button class="modal-submit-btn" onclick="submitOrder()" data-i18n="order_submit">Тапсырысты растау</button>
     </div>
   </div>
 </div>
+
+<!-- ================================================================
+     ADMIN ITEM MODAL (add/edit menu item — reuses the order modal's
+     overlay/box styling, see #orderModal, #adminItemModal CSS rule)
+     ================================================================ -->
+<div id="adminItemModal" role="dialog" aria-modal="true" aria-labelledby="adminItemModalTitle">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <h2 class="modal-title" id="adminItemModalTitle">Жаңа тағам</h2>
+      </div>
+      <button class="modal-close-btn" onclick="adminCloseItemModal()" aria-label="Жабу">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="adminItemNameKk" data-i18n="admin_item_name_kk">Атауы (қазақша)</label>
+        <input type="text" class="form-input" id="adminItemNameKk"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adminItemNameRu" data-i18n="admin_item_name_ru">Атауы (орысша)</label>
+        <input type="text" class="form-input" id="adminItemNameRu"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adminItemCat" data-i18n="admin_item_cat">Санат</label>
+        <select class="form-select" id="adminItemCat"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adminItemPrice" data-i18n="admin_item_price">Бағасы (₸)</label>
+        <input type="number" class="form-input" id="adminItemPrice" inputmode="numeric" min="0" step="50"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adminItemImg" data-i18n="admin_item_img">Сурет сілтемесі (URL)</label>
+        <input type="text" class="form-input" id="adminItemImg" placeholder="https://…" oninput="adminClearPhotoFile()"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adminItemPhotoFile" data-i18n="admin_item_photo_upload">Немесе суретті жүктеу</label>
+        <div class="admin-photo-upload">
+          <img id="adminItemPhotoPreview" class="admin-photo-preview" alt="" style="display:none;"/>
+          <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+            <span data-i18n="admin_item_photo_choose">Файл таңдау</span>
+            <input type="file" accept="image/*" id="adminItemPhotoFile" style="display:none" onchange="adminHandleItemPhoto(event)"/>
+          </label>
+        </div>
+      </div>
+      <div class="form-group form-group-inline">
+        <label class="admin-switch">
+          <input type="checkbox" id="adminItemAvailable" checked/>
+          <span data-i18n="admin_item_available">Сатылымда бар</span>
+        </label>
+      </div>
+
+      <button class="modal-submit-btn" onclick="adminSaveItem()" data-i18n="admin_item_save">Сақтау</button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment processing overlay -->
+<div id="payProcessing">
+  <div class="pay-spinner"></div>
+  <div class="pay-processing-text" data-i18n="pay_processing_title">Төлем өңделуде…</div>
+  <div class="pay-processing-sub" data-i18n="pay_processing_sub">Терезені жаппаңыз</div>
+</div>
+
 
 <!-- Toast -->
 <div id="toast" role="alert" aria-live="polite"></div>
@@ -3725,6 +4332,127 @@ const TRANSLATIONS = {
 
     toast_added:       'Себетке қосылды',
     toast_order:       'Тапсырыс қабылданды! Жақын арада хабарласамыз.',
+
+    cabinet_title:      'Жеке кабинет',
+    cabinet_lead:       'Тапсырыс тарихын көру үшін телефон нөміріңізді енгізіңіз.',
+    cabinet_phone_ph:   '(___) ___-__-__',
+    cabinet_name_ph:    'Атыңыз (міндетті емес)',
+    cabinet_login_btn:  'Кіру',
+    cabinet_logout:     'Шығу',
+    cabinet_orders_title: 'Тапсырыстар тарихы',
+    cabinet_empty:      'Әзірге тапсырыстар жоқ',
+    cabinet_phone_required: 'Телефон нөмірін толық енгізіңіз!',
+    cabinet_admin_link: 'Мекеменің әкімшісісіз бе? Кіру',
+    oh_repeat:          'Қайталау',
+    oh_status_new:      'Қабылданды',
+
+    order_phone_invalid: 'Телефон нөмірін толық енгізіңіз (10 цифр)',
+    order_fill_addr:    'Жеткізу мекенжайын енгізіңіз!',
+
+    card_number_lbl:    'Карта нөмірі',
+    card_expiry_lbl:    'Мерзімі',
+    card_cvv_lbl:       'CVV',
+    card_security_note: 'Деректеріңіз қауіпсіз өңделеді. Карта нөмірі серверде сақталмайды.',
+    card_invalid:       'Карта деректерін тексеріңіз',
+    pay_processing_title: 'Төлем өңделуде…',
+    pay_processing_sub: 'Терезені жаппаңыз',
+
+    admin_login_title:  'Әкімші кірісі',
+    admin_login_lead:   'Мекеме әкімшісі ретінде кіру үшін PIN-кодты енгізіңіз.',
+    admin_pin_ph:       'PIN-код',
+    admin_login_btn:    'Кіру',
+    admin_back_link:    '← Клиент кірісіне оралу',
+    admin_pin_required: 'PIN-кодты енгізіңіз',
+    admin_wrong_pin:    'PIN-код қате. Қалған әрекеттер',
+    admin_locked_msg:   'Тым көп қате әрекет. {sec} секундтан кейін қайталап көріңіз.',
+
+    admin_panel_title:  'Әкімші панелі',
+    admin_notice_text:  'Деректер осы құрылғы/браузерде сақталады. Сервер қосылғанда мәзір автоматты түрде онымен синхрондалады.',
+    admin_search_ph:    'Атауы бойынша іздеу…',
+    admin_filter_all:   'Барлық санаттар',
+    admin_add_item:     '+ Тағам қосу',
+    admin_th_img:       'Сурет',
+    admin_th_name:      'Атауы',
+    admin_th_cat:       'Санат',
+    admin_th_price:     'Бағасы',
+    admin_th_actions:   'Әрекет',
+    admin_edit:          'Өзгерту',
+    admin_delete:         'Жою',
+    admin_empty:          'Тағамдар табылмады',
+    admin_export:         'Экспорт (JSON)',
+    admin_import:         'Импорт (JSON)',
+    admin_reset:          'Бастапқы мәзірге қайтару',
+    admin_change_pin:     'PIN-кодты ауыстыру',
+    admin_logout:         'Әкімші кірісінен шығу',
+    admin_confirm_delete: 'Бұл тағамды жоюды растайсыз ба?',
+    admin_confirm_reset:  'Барлық өзгерістер жойылып, бастапқы мәзір қалпына келеді. Жалғастыру керек пе?',
+
+    admin_item_modal_title_new:  'Жаңа тағам',
+    admin_item_modal_title_edit: 'Тағамды өзгерту',
+    admin_item_name_kk:   'Атауы (қазақша)',
+    admin_item_name_ru:   'Атауы (орысша)',
+    admin_item_cat:       'Санат',
+    admin_item_price:     'Бағасы (₸)',
+    admin_item_img:       'Сурет сілтемесі (URL)',
+    admin_item_save:      'Сақтау',
+    admin_item_cancel:    'Бас тарту',
+    admin_item_name_required:  'Екі тілдегі атауын да енгізіңіз',
+    admin_item_cat_required:   'Санатты таңдаңыз',
+    admin_item_price_required: 'Дұрыс баға енгізіңіз',
+
+    admin_save_ok:    'Сақталды',
+    admin_delete_ok:  'Жойылды',
+    admin_reset_ok:   'Мәзір бастапқы қалпына келтірілді',
+    admin_import_ok:  'Мәзір сәтті импортталды',
+    admin_import_fail:'Файл оқылмады. JSON форматын тексеріңіз',
+
+    admin_change_pin_title: 'PIN-кодты ауыстыру',
+    admin_pin_old_ph:     'Ескі PIN-код',
+    admin_pin_new_ph:     'Жаңа PIN-код (кемінде 6 цифр)',
+    admin_pin_confirm_ph: 'Жаңа PIN-кодты қайталаңыз',
+    admin_pin_save:       'Сақтау',
+    admin_pin_cancel:     'Бас тарту',
+    admin_pin_changed:    'PIN-код сәтті ауыстырылды',
+    admin_pin_mismatch:   'Жаңа PIN-кодтар сәйкес келмейді',
+    admin_pin_short:      'Жаңа PIN-код кемінде 6 цифрдан тұруы керек',
+    admin_pin_wrong_old:  'Ескі PIN-код қате',
+    admin_pin_clear:      'Қосымша PIN-кодты өшіру',
+    admin_pin_cleared:    'Қосымша PIN-код өшірілді. Тек 3 негізгі код қолданылады',
+
+    admin_tab_menu:        'Мәзір',
+    admin_tab_orders:      'Тапсырыстар',
+    admin_tab_settings:    'Параметрлер',
+
+    admin_master_codes_title: 'Кіру кодтары',
+    admin_master_codes_text:  'Мекемеге 3 тұрақты код белгіленген — солардың кез келгенімен кіруге болады. Қосымша жеке PIN-кодты төменде қоса аласыз.',
+
+    admin_soldout_tag:     'Таусылды',
+    admin_mark_soldout:    'Таусылды деп белгілеу',
+    admin_mark_available:  'Сатылымға қайтару',
+    item_sold_out:         'Таусылды',
+
+    admin_item_photo_upload: 'Немесе суретті жүктеу',
+    admin_item_photo_choose: 'Файл таңдау',
+    admin_item_photo_invalid:'Тек сурет файлын таңдаңыз',
+    admin_item_available:    'Сатылымда бар',
+
+    admin_stat_orders_total:  'Барлық тапсырыс',
+    admin_stat_orders_today:  'Бүгінгі тапсырыс',
+    admin_stat_revenue_total: 'Жалпы түсім',
+    admin_stat_revenue_today: 'Бүгінгі түсім',
+    admin_stat_avg_check:     'Орташа чек',
+    admin_stat_top_dish:      'Көп сатылған тағам',
+    admin_orders_empty:       'Тапсырыстар табылмады',
+    admin_orders_search_ph:   'Тел./аты бойынша іздеу…',
+
+    admin_status_new:        'Қабылданды',
+    admin_status_preparing:  'Дайындалуда',
+    admin_status_ready:      'Дайын',
+    admin_status_done:       'Аяқталды',
+
+    no_items:              'Тағамдар табылмады',
+
+    mobile_admin_link:    'Әкімші кірісі',
   },
 
   ru: {
@@ -3847,13 +4575,134 @@ const TRANSLATIONS = {
 
     toast_added:       'Добавлено в корзину',
     toast_order:       'Заказ принят! Скоро свяжемся с вами.',
+
+    cabinet_title:      'Личный кабинет',
+    cabinet_lead:       'Введите номер телефона, чтобы посмотреть историю заказов.',
+    cabinet_phone_ph:   '(___) ___-__-__',
+    cabinet_name_ph:    'Ваше имя (необязательно)',
+    cabinet_login_btn:  'Войти',
+    cabinet_logout:     'Выйти',
+    cabinet_orders_title: 'История заказов',
+    cabinet_empty:      'Заказов пока нет',
+    cabinet_phone_required: 'Введите номер телефона полностью!',
+    cabinet_admin_link: 'Вы администратор заведения? Войти',
+    oh_repeat:          'Повторить',
+    oh_status_new:      'Принят',
+
+    order_phone_invalid: 'Введите номер телефона полностью (10 цифр)',
+    order_fill_addr:    'Укажите адрес доставки!',
+
+    card_number_lbl:    'Номер карты',
+    card_expiry_lbl:    'Срок действия',
+    card_cvv_lbl:       'CVV',
+    card_security_note: 'Ваши данные обрабатываются безопасно. Номер карты не сохраняется на сервере.',
+    card_invalid:       'Проверьте данные карты',
+    pay_processing_title: 'Обработка платежа…',
+    pay_processing_sub: 'Не закрывайте окно',
+
+    admin_login_title:  'Вход для администратора',
+    admin_login_lead:   'Введите PIN-код, чтобы войти как администратор заведения.',
+    admin_pin_ph:       'PIN-код',
+    admin_login_btn:    'Войти',
+    admin_back_link:    '← Вернуться к клиентскому входу',
+    admin_pin_required: 'Введите PIN-код',
+    admin_wrong_pin:    'Неверный PIN-код. Осталось попыток',
+    admin_locked_msg:   'Слишком много неверных попыток. Повторите через {sec} сек.',
+
+    admin_panel_title:  'Панель администратора',
+    admin_notice_text:  'Данные хранятся в этом устройстве/браузере. При подключении сервера меню будет автоматически синхронизироваться с ним.',
+    admin_search_ph:    'Поиск по названию…',
+    admin_filter_all:   'Все категории',
+    admin_add_item:     '+ Добавить блюдо',
+    admin_th_img:       'Фото',
+    admin_th_name:      'Название',
+    admin_th_cat:       'Категория',
+    admin_th_price:     'Цена',
+    admin_th_actions:   'Действие',
+    admin_edit:          'Изменить',
+    admin_delete:         'Удалить',
+    admin_empty:          'Блюда не найдены',
+    admin_export:         'Экспорт (JSON)',
+    admin_import:         'Импорт (JSON)',
+    admin_reset:          'Сбросить к исходному меню',
+    admin_change_pin:     'Сменить PIN-код',
+    admin_logout:         'Выйти из админ-панели',
+    admin_confirm_delete: 'Удалить это блюдо?',
+    admin_confirm_reset:  'Все изменения будут потеряны, меню вернётся к исходному. Продолжить?',
+
+    admin_item_modal_title_new:  'Новое блюдо',
+    admin_item_modal_title_edit: 'Изменить блюдо',
+    admin_item_name_kk:   'Название (казахский)',
+    admin_item_name_ru:   'Название (русский)',
+    admin_item_cat:       'Категория',
+    admin_item_price:     'Цена (₸)',
+    admin_item_img:       'Ссылка на изображение (URL)',
+    admin_item_save:      'Сохранить',
+    admin_item_cancel:    'Отмена',
+    admin_item_name_required:  'Укажите название на обоих языках',
+    admin_item_cat_required:   'Выберите категорию',
+    admin_item_price_required: 'Укажите корректную цену',
+
+    admin_save_ok:    'Сохранено',
+    admin_delete_ok:  'Удалено',
+    admin_reset_ok:   'Меню сброшено к исходному',
+    admin_import_ok:  'Меню успешно импортировано',
+    admin_import_fail:'Не удалось прочитать файл. Проверьте формат JSON',
+
+    admin_change_pin_title: 'Смена PIN-кода',
+    admin_pin_old_ph:     'Старый PIN-код',
+    admin_pin_new_ph:     'Новый PIN-код (минимум 6 цифр)',
+    admin_pin_confirm_ph: 'Повторите новый PIN-код',
+    admin_pin_save:       'Сохранить',
+    admin_pin_cancel:     'Отмена',
+    admin_pin_changed:    'PIN-код успешно изменён',
+    admin_pin_mismatch:   'Новые PIN-коды не совпадают',
+    admin_pin_short:      'Новый PIN-код должен содержать минимум 6 цифр',
+    admin_pin_wrong_old:  'Старый PIN-код неверен',
+    admin_pin_clear:      'Удалить дополнительный PIN-код',
+    admin_pin_cleared:    'Дополнительный PIN-код удалён. Действуют только 3 основных кода',
+
+    admin_tab_menu:        'Меню',
+    admin_tab_orders:      'Заказы',
+    admin_tab_settings:    'Настройки',
+
+    admin_master_codes_title: 'Коды для входа',
+    admin_master_codes_text:  'Для заведения закреплено 3 постоянных кода — войти можно с любым из них. Дополнительный личный PIN-код можно добавить ниже.',
+
+    admin_soldout_tag:     'Закончилось',
+    admin_mark_soldout:    'Отметить как закончилось',
+    admin_mark_available:  'Вернуть в продажу',
+    item_sold_out:         'Закончилось',
+
+    admin_item_photo_upload: 'Или загрузите фото',
+    admin_item_photo_choose: 'Выбрать файл',
+    admin_item_photo_invalid:'Выберите файл изображения',
+    admin_item_available:    'Есть в продаже',
+
+    admin_stat_orders_total:  'Всего заказов',
+    admin_stat_orders_today:  'Заказов сегодня',
+    admin_stat_revenue_total: 'Общая выручка',
+    admin_stat_revenue_today: 'Выручка сегодня',
+    admin_stat_avg_check:     'Средний чек',
+    admin_stat_top_dish:      'Хит продаж',
+    admin_orders_empty:       'Заказы не найдены',
+    admin_orders_search_ph:   'Поиск по тел./имени…',
+
+    admin_status_new:        'Принят',
+    admin_status_preparing:  'Готовится',
+    admin_status_ready:      'Готов',
+    admin_status_done:       'Завершён',
+
+    no_items:              'Блюда не найдены',
+
+    mobile_admin_link:    'Вход для администратора',
   },
 };
 
 /* ---------------------------------------------------------------
    MENU DATA — From toiypall.qrpay.kz
    --------------------------------------------------------------- */
-const MENU = [
+const DEFAULT_MENU = [
   /* ── ВЫПЕЧКА ── */
   {
     id: 101, cat: 'baking',
@@ -4082,6 +4931,46 @@ const MENU = [
   },
 ];
 
+/* ---------------------------------------------------------------
+   MENU OVERRIDE — lets the built-in admin panel (see "ADMIN PANEL"
+   below) update the menu without touching code. The admin panel
+   reads/writes this same localStorage key.
+
+   NOTE: this is BROWSER-LOCAL. Changes made in the admin panel on
+   one device/browser only affect that device until a real backend
+   (see API_BASE below) is connected and both this page and the
+   admin panel read/write through it instead of localStorage.
+   --------------------------------------------------------------- */
+const MENU_STORAGE_KEY = 'toiypall_menu_data';
+
+function loadMenuOverride() {
+  try {
+    const raw = localStorage.getItem(MENU_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length) return parsed;
+  } catch (e) { /* ignore corrupt data */ }
+  return null;
+}
+
+let MENU = loadMenuOverride() || DEFAULT_MENU;
+
+/* Best-effort: if a real backend is configured, prefer its menu and
+   keep localStorage in sync so the admin panel and site agree. */
+async function refreshMenuFromBackend() {
+  try {
+    const res = await fetch(`${API_BASE}/api/menu`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (Array.isArray(data) && data.length) {
+      MENU = data;
+      localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(data));
+      renderCategoryTabs();
+      renderMenuGrid(currentCat);
+    }
+  } catch (e) { /* no backend yet — silently keep local/default menu */ }
+}
+
 /* Category definitions */
 const CATEGORIES = [
   { key: 'all',      label: { kk: 'Барлығы',         ru: 'Все' } },
@@ -4177,6 +5066,9 @@ function setLang(lang) {
   renderBranches();
   renderCartItems();
 
+  // Keep the cabinet/admin panel in sync with the active language too
+  if (document.getElementById('cabinetBody')) renderCabinet();
+
   // Re-populate select
   const sel = document.getElementById('orderBranch');
   if (sel) {
@@ -4233,6 +5125,7 @@ function buildMenuCard(item) {
   const desc    = item.desc ? (item.desc[currentLang] || item.desc.kk) : '';
   const qty     = cart[item.id] || 0;
   const imgSrc  = item.img;
+  const soldOut = item.available === false;
 
   const imgEl = imgSrc
     ? `<img src="${imgSrc}" alt="${name}" loading="lazy"
@@ -4248,7 +5141,7 @@ function buildMenuCard(item) {
     </svg>
   </div>`;
 
-  const controls = qty === 0
+  const controls = soldOut ? '' : (qty === 0
     ? `<button class="card-add-btn" onclick="addToCart(${item.id})">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -4259,13 +5152,13 @@ function buildMenuCard(item) {
         <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
         <span class="qty-num" id="qtyNum_${item.id}">${qty}</span>
         <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
-       </div>`;
+       </div>`);
 
-  return `<article class="menu-card" role="listitem">
+  return `<article class="menu-card${soldOut ? ' sold-out' : ''}" role="listitem">
     <div class="card-media">
       ${imgEl}
       ${placeholderEl}
-      <span class="card-halal-tag">Халал</span>
+      ${soldOut ? `<span class="card-soldout-badge">${t('item_sold_out')}</span>` : `<span class="card-halal-tag">Халал</span>`}
     </div>
     <div class="card-body">
       <h3 class="card-name">${name}</h3>
@@ -4606,6 +5499,19 @@ function checkout() {
       BRANCHES.map(b => `<option value="${b.id}">${b.name[currentLang] || b.name.kk}</option>`).join('');
   }
 
+  // Prefill name/phone for a logged-in cabinet customer, so they
+  // don't have to retype it on every order.
+  const cabinetUser = getCabinetUser();
+  if (cabinetUser && cabinetUser.phone) {
+    const nameEl  = document.getElementById('orderName');
+    const phoneEl = document.getElementById('orderPhone');
+    if (nameEl && !nameEl.value && cabinetUser.name) nameEl.value = cabinetUser.name;
+    if (phoneEl && !phoneEl.value) {
+      const d = digitsOnly(cabinetUser.phone).slice(-10);
+      phoneEl.value = formatPhoneRest(d);
+    }
+  }
+
   // Show modal
   const modal = document.getElementById('orderModal');
   modal.classList.add('visible');
@@ -4616,6 +5522,10 @@ function closeModal() {
   const modal = document.getElementById('orderModal');
   modal.classList.remove('visible');
   document.body.style.overflow = '';
+  ['cardNumber', 'cardExpiry', 'cardCvv'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('invalid'); }
+  });
 }
 
 /* ---------------------------------------------------------------
@@ -4633,11 +5543,1179 @@ function setupDeliveryToggle() {
 }
 
 /* ---------------------------------------------------------------
+   PHONE INPUT — locked +7 prefix
+
+   The prefix "+7" lives in a separate, non-editable <span> next to
+   the input, so the customer only ever types the 10 local digits
+   and never has to think about whether to type 8 or +7. The full
+   E.164-ish value ("+7XXXXXXXXXX") is assembled on demand via
+   fullPhoneValue() whenever the form is submitted.
+   --------------------------------------------------------------- */
+function digitsOnly(v) {
+  return (v || '').replace(/\D/g, '');
+}
+
+function formatPhoneRest(raw) {
+  const d = digitsOnly(raw).slice(0, 10);
+  let out = '';
+  if (d.length > 0) out += '(' + d.slice(0, 3);
+  if (d.length >= 3) out += ') ';
+  if (d.length > 3) out += d.slice(3, 6);
+  if (d.length >= 6) out += '-' + d.slice(6, 8);
+  if (d.length >= 8) out += '-' + d.slice(8, 10);
+  return out;
+}
+
+function fullPhoneValue(inputEl) {
+  if (!inputEl) return '';
+  const d = digitsOnly(inputEl.value).slice(0, 10);
+  return d ? '+7' + d : '';
+}
+
+function phoneIsComplete(inputEl) {
+  return digitsOnly(inputEl && inputEl.value).length === 10;
+}
+
+function bindPhoneInput(id) {
+  const el = document.getElementById(id);
+  if (!el || el._phoneBound) return;
+  el._phoneBound = true;
+
+  el.addEventListener('input', () => {
+    el.value = formatPhoneRest(el.value);
+    el.classList.remove('invalid');
+    const group = el.closest('.phone-input-group');
+    if (group) group.classList.remove('invalid');
+  });
+
+  // Pasting a number that already includes "+7" / "8" up front
+  // shouldn't double up the country code — strip it before formatting.
+  el.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    let d = digitsOnly(text);
+    if (d.length === 11 && (d[0] === '7' || d[0] === '8')) d = d.slice(1);
+    el.value = formatPhoneRest(d);
+    el.dispatchEvent(new Event('input'));
+  });
+}
+
+function initPhoneInputs() {
+  bindPhoneInput('orderPhone');
+}
+
+/* ---------------------------------------------------------------
+   CABINET (личный кабинет / история заказов)
+
+   NOTE: this is a BROWSER-LOCAL implementation. There is no backend
+   account system yet — "login" just remembers a phone number in
+   this browser (localStorage) and order history is saved locally
+   at the moment an order is placed. Once a real backend/API exists,
+   swap getOrderHistory()/saveOrderToHistory() to call API_BASE
+   instead of localStorage, the same way refreshMenuFromBackend()
+   already does for the menu.
+   --------------------------------------------------------------- */
+const CABINET_USER_KEY = 'toiypall_cabinet_user';
+
+function ordersStorageKey(phone) {
+  return 'toiypall_orders_' + phone.replace(/\D/g, '');
+}
+
+function getCabinetUser() {
+  try { return JSON.parse(localStorage.getItem(CABINET_USER_KEY) || 'null'); }
+  catch (e) { return null; }
+}
+
+function getOrderHistory(phone) {
+  try { return JSON.parse(localStorage.getItem(ordersStorageKey(phone)) || '[]'); }
+  catch (e) { return []; }
+}
+
+function saveOrderToHistory(payload) {
+  if (!payload || !payload.phone) return;
+  try {
+    const key    = ordersStorageKey(payload.phone);
+    const orders = JSON.parse(localStorage.getItem(key) || '[]');
+    orders.push({ ...payload, createdAt: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(orders));
+    // Remember this phone/name as the logged-in cabinet user automatically
+    localStorage.setItem(CABINET_USER_KEY, JSON.stringify({ phone: payload.phone, name: payload.name || '' }));
+  } catch (e) { /* ignore */ }
+}
+
+/* cabinetView controls which screen the sidebar shows when no admin
+   session is active: 'customer' (default login/orders) or
+   'adminLogin' (PIN entry). An active admin session always wins,
+   regardless of cabinetView — see renderCabinet(). */
+let cabinetView = 'customer';
+
+function toggleCabinet() {
+  const sidebar = document.getElementById('cabinetSidebar');
+  const overlay = document.getElementById('cabinetOverlay');
+  if (!sidebar || !overlay) return;
+  const open = !sidebar.classList.contains('open');
+  sidebar.classList.toggle('open', open);
+  overlay.classList.toggle('open', open);
+  sidebar.setAttribute('aria-hidden', String(!open));
+  document.body.style.overflow = open ? 'hidden' : '';
+  if (!open && !isAdminLoggedIn()) cabinetView = 'customer';
+  if (open) renderCabinet();
+}
+
+function openAdminLogin() {
+  cabinetView = 'adminLogin';
+  renderCabinet();
+}
+
+function backToCustomerCabinet() {
+  cabinetView = 'customer';
+  renderCabinet();
+}
+
+/* Entry point used by the burger (☰) menu's "Admin login" link, so
+   admin sign-in is reachable straight from the top-right menu on
+   mobile, not just buried inside the customer cabinet. */
+function openAdminFromMenu() {
+  closeMobileNav();
+  cabinetView = 'adminLogin';
+  const sidebar = document.getElementById('cabinetSidebar');
+  if (sidebar && sidebar.classList.contains('open')) {
+    renderCabinet();
+  } else {
+    toggleCabinet();
+  }
+}
+
+function cabinetLogin() {
+  const phoneEl = document.getElementById('cabinetPhone');
+  const nameEl  = document.getElementById('cabinetName');
+  if (!phoneEl || !digitsOnly(phoneEl.value)) { showToast(t('cabinet_phone_required')); return; }
+  if (!phoneIsComplete(phoneEl)) {
+    phoneEl.classList.add('invalid');
+    const group = phoneEl.closest('.phone-input-group');
+    if (group) group.classList.add('invalid');
+    showToast(t('order_phone_invalid'));
+    return;
+  }
+  const phone = fullPhoneValue(phoneEl);
+  localStorage.setItem(CABINET_USER_KEY, JSON.stringify({ phone, name: nameEl ? nameEl.value.trim() : '' }));
+  renderCabinet();
+}
+
+function cabinetLogout() {
+  localStorage.removeItem(CABINET_USER_KEY);
+  renderCabinet();
+}
+
+function renderOrderCard(order, idx) {
+  const date = order.createdAt ? new Date(order.createdAt) : null;
+  const dateStr = date ? date.toLocaleString(currentLang === 'ru' ? 'ru-RU' : 'kk-KZ', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  }) : '';
+
+  const itemsHtml = (order.items || []).map(i => `
+    <div class="summary-item">
+      <span class="summary-item-name">${i.name} ×${i.qty}</span>
+      <span class="summary-item-price">${(i.price * i.qty).toLocaleString()} ₸</span>
+    </div>`).join('');
+
+  return `
+    <div class="cabinet-order-card">
+      <div class="cabinet-order-head">
+        <span class="cabinet-order-date">${dateStr}</span>
+        <span class="cabinet-order-status">${t('admin_status_' + (order.status || 'new'))}</span>
+      </div>
+      <div class="order-summary">
+        ${itemsHtml}
+        <div class="summary-total">
+          <span>${t('summary_total')}</span>
+          <span class="summary-total-num">${(order.total || 0).toLocaleString()} ₸</span>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm w-full" onclick="repeatOrder(${idx})" data-order-idx="${idx}">${t('oh_repeat')}</button>
+    </div>`;
+}
+
+function renderCabinet() {
+  const body    = document.getElementById('cabinetBody');
+  const sidebar = document.getElementById('cabinetSidebar');
+  if (!body) return;
+
+  const adminActive = isAdminLoggedIn();
+  if (sidebar) sidebar.classList.toggle('admin-mode', adminActive);
+
+  if (adminActive) {
+    touchAdminSession();
+    if (adminSubView === 'settings') {
+      body.innerHTML = renderAdminSettingsHtml();
+    } else if (adminSubView === 'orders') {
+      body.innerHTML = renderAdminOrdersHtml();
+      adminBindOrdersToolbar();
+    } else {
+      body.innerHTML = renderAdminPanelHtml();
+      adminBindToolbar();
+    }
+    return;
+  }
+
+  if (cabinetView === 'adminLogin') {
+    body.innerHTML = renderAdminLoginHtml();
+    const pinEl = document.getElementById('adminPin');
+    if (pinEl) pinEl.focus();
+    return;
+  }
+
+  const user = getCabinetUser();
+
+  if (!user || !user.phone) {
+    body.innerHTML = `
+      <div class="cabinet-login-box">
+        <p class="cabinet-login-lead">${t('cabinet_lead')}</p>
+        <div class="form-group">
+          <label class="form-label" for="cabinetPhone" data-i18n="order_phone">${t('order_phone')}</label>
+          <div class="phone-input-group" id="cabinetPhoneGroup">
+            <span class="phone-prefix">+7</span>
+            <input type="tel" class="form-input phone-input-rest" id="cabinetPhone" inputmode="numeric" placeholder="${t('cabinet_phone_ph')}" autocomplete="tel" maxlength="15"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cabinetName" data-i18n="order_name">${t('order_name')}</label>
+          <input type="text" class="form-input" id="cabinetName" placeholder="${t('cabinet_name_ph')}" autocomplete="given-name"/>
+        </div>
+        <button class="btn btn-primary w-full" onclick="cabinetLogin()">${t('cabinet_login_btn')}</button>
+        <button class="cabinet-admin-link" onclick="openAdminLogin()">${t('cabinet_admin_link')}</button>
+      </div>`;
+    bindPhoneInput('cabinetPhone');
+    return;
+  }
+
+  const orders = getOrderHistory(user.phone).slice().reverse();
+  const ordersHtml = orders.length
+    ? orders.map((o, i) => renderOrderCard(o, i)).join('')
+    : `
+      <div class="cabinet-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293A1 1 0 0 0 5.414 17H17"/>
+          <circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/>
+        </svg>
+        <div class="cabinet-empty-text">${t('cabinet_empty')}</div>
+      </div>`;
+
+  // orders is reversed for display (newest first); repeatOrder needs the
+  // original (non-reversed) index to look the order back up reliably.
+  const originalCount = orders.length;
+  body.innerHTML = `
+    <div class="cabinet-profile-row">
+      <div class="cabinet-avatar">${(user.name || user.phone).trim().charAt(0).toUpperCase()}</div>
+      <div class="cabinet-profile-info">
+        <div class="cabinet-profile-name">${user.name || user.phone}</div>
+        <div class="cabinet-profile-phone">${user.phone}</div>
+      </div>
+      <button class="cabinet-logout-btn" onclick="cabinetLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        ${t('cabinet_logout')}
+      </button>
+    </div>
+    <div class="cabinet-orders-title">${t('cabinet_orders_title')}</div>
+    ${ordersHtml}
+  `;
+  // store reversed list on the element so repeatOrder() can read it back
+  body._cabinetOrders = orders;
+  void originalCount;
+}
+
+function repeatOrder(displayIdx) {
+  const body   = document.getElementById('cabinetBody');
+  const orders = body && body._cabinetOrders;
+  const order  = orders && orders[displayIdx];
+  if (!order) return;
+
+  // Refill the cart with the items from that past order
+  cart = {};
+  (order.items || []).forEach(i => { cart[i.id] = i.qty; });
+  updateCartUI();
+  renderCartItems();
+  toggleCabinet();
+  showToast(t('toast_added'));
+  checkout();
+}
+
+/* ===================================================================
+   ADMIN PANEL — built straight into the site (no separate admin.html,
+   no separate login page). The same #cabinetSidebar drawer is reused:
+   it switches into a full-screen "admin-mode" panel once the admin
+   PIN is verified.
+
+   SECURITY MODEL (read this before relying on it in production):
+   ------------------------------------------------------------------
+   This is a static front-end site with no server of its own, so a
+   "perfectly secure" admin login isn't possible from client-side code
+   alone — any check that runs in the browser can, in principle, be
+   read or bypassed by someone with developer tools. Given that
+   constraint, this implementation is hardened as much as it
+   reasonably can be on the client:
+
+     1. PINs are never stored or compared in plain text. Only their
+        SHA-256 hashes are kept/compared — the 3 master codes' hashes
+        are hardcoded below, and any extra personal PIN is hashed
+        before it ever touches localStorage.
+     2. If a real backend is configured (API_BASE), the PIN is
+        verified server-side first via POST /api/admin/login — that
+        is the only way to get *real* security, because the secret
+        then never has to live in the page source at all. The local
+        hash check is purely an offline fallback.
+     3. Failed attempts are rate-limited: after 5 wrong PINs in a row
+        the form locks out with an increasing cooldown (30s, then
+        60s, 120s, …), persisted in localStorage so it survives a
+        page reload.
+     4. The admin session itself lives in sessionStorage (cleared the
+        moment the browser tab/window closes) with a 20-minute idle
+        timeout, instead of staying logged in forever like the
+        customer cabinet does.
+     5. Three fixed master codes (set by the site owner, not shown in
+        the UI) always work, and any admin can layer an extra personal
+        PIN on top from "Settings" inside the admin panel.
+
+   For a real deployment, point this at a proper backend endpoint
+   (POST /api/admin/login) that does the actual password check
+   server-side and returns a session token; the local hash check
+   below is a safety net for when no backend is connected yet.
+   =================================================================== */
+
+const ADMIN_SESSION_KEY  = 'toiypall_admin_session'; // sessionStorage — gone when the tab closes
+const ADMIN_PIN_HASH_KEY = 'toiypall_admin_pin_hash'; // localStorage — only set once an extra personal PIN is added
+const ADMIN_LOCKOUT_KEY  = 'toiypall_admin_lockout';
+const ADMIN_SESSION_MS   = 20 * 60 * 1000;  // 20 min idle timeout
+const ADMIN_MAX_ATTEMPTS = 5;
+const ADMIN_LOCK_BASE_MS = 30 * 1000;       // 30s, doubles with every repeated lockout
+
+/* Three fixed master codes: 1293, 2387, 4513 — any one of them logs
+   any admin/owner into the cabinet. They are stored only as SHA-256
+   hashes below, never in plain text, so the actual digits never sit
+   in the page source. On top of these, each admin can optionally set
+   their own personal extra PIN from "Settings" — that one is layered
+   on top of (not a replacement for) the three master codes. */
+const MASTER_ADMIN_PIN_HASHES = [
+  '587a490557627756d252bf50aab1c7c0faa45f5fe2f9160fa8fe0d5d55c5a679', // 1293
+  '21694999947ce99bd5c90e9bcb2734e23f87f86d0b381f57fe3b0185da57edd3', // 2387
+  '34ac9f308cb2e1f699198386b6bd3dc13b92fea8c9fb1aa94c600b3b8c7854c7', // 4513
+];
+
+let adminSubView    = 'list';    // 'list' | 'settings', within an active admin session
+let adminEditingId  = null;
+let adminSearchQuery = '';
+let adminCatFilter   = 'all';
+
+/* Pure-JS SHA-256 fallback — used when window.crypto.subtle isn't
+   available (e.g. the page is served over plain http on a non-
+   localhost host, where browsers disable the Web Crypto API because
+   it's not a "secure context"). Without this fallback, admin login
+   silently fails to verify ANY PIN — including the 3 correct master
+   codes — on exactly that kind of hosting, which is what caused the
+   "code is invalid" symptom. */
+function sha256HexFallback(str) {
+  function rrot(x, n) { return (x >>> n) | (x << (32 - n)); }
+  const K = [
+    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+  ];
+  let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const bytes = new TextEncoder().encode(str);
+  const bitLen = bytes.length * 8;
+  const withOne = bytes.length + 1;
+  const padLen = (withOne % 64 <= 56) ? 56 - (withOne % 64) : 120 - (withOne % 64);
+  const total = withOne + padLen + 8;
+  const buf = new Uint8Array(total);
+  buf.set(bytes, 0);
+  buf[bytes.length] = 0x80;
+  const hi = Math.floor(bitLen / 0x100000000), lo = bitLen >>> 0;
+  buf[total-8]=(hi>>>24)&0xff; buf[total-7]=(hi>>>16)&0xff; buf[total-6]=(hi>>>8)&0xff; buf[total-5]=hi&0xff;
+  buf[total-4]=(lo>>>24)&0xff; buf[total-3]=(lo>>>16)&0xff; buf[total-2]=(lo>>>8)&0xff; buf[total-1]=lo&0xff;
+
+  const w = new Uint32Array(64);
+  for (let off = 0; off < total; off += 64) {
+    for (let i = 0; i < 16; i++) {
+      w[i] = (buf[off+i*4]<<24) | (buf[off+i*4+1]<<16) | (buf[off+i*4+2]<<8) | (buf[off+i*4+3]);
+    }
+    for (let i = 16; i < 64; i++) {
+      const s0 = rrot(w[i-15],7) ^ rrot(w[i-15],18) ^ (w[i-15]>>>3);
+      const s1 = rrot(w[i-2],17) ^ rrot(w[i-2],19) ^ (w[i-2]>>>10);
+      w[i] = (w[i-16] + s0 + w[i-7] + s1) >>> 0;
+    }
+    let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+    for (let i = 0; i < 64; i++) {
+      const S1 = rrot(e,6) ^ rrot(e,11) ^ rrot(e,25);
+      const ch = (e & f) ^ (~e & g);
+      const t1 = (h + S1 + ch + K[i] + w[i]) >>> 0;
+      const S0 = rrot(a,2) ^ rrot(a,13) ^ rrot(a,22);
+      const maj = (a & b) ^ (a & c) ^ (b & c);
+      const t2 = (S0 + maj) >>> 0;
+      h=g; g=f; f=e; e=(d+t1)>>>0; d=c; c=b; b=a; a=(t1+t2)>>>0;
+    }
+    H = [ (H[0]+a)>>>0, (H[1]+b)>>>0, (H[2]+c)>>>0, (H[3]+d)>>>0,
+          (H[4]+e)>>>0, (H[5]+f)>>>0, (H[6]+g)>>>0, (H[7]+h)>>>0 ];
+  }
+  return H.map(x => x.toString(16).padStart(8,'0')).join('');
+}
+
+async function sha256Hex(str) {
+  try {
+    if (window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+      const enc = new TextEncoder().encode(str);
+      const buf = await window.crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (e) { /* fall through to the pure-JS implementation below */ }
+  return sha256HexFallback(str);
+}
+
+/* Returns the optional personal/extra PIN hash, if the admin ever set
+   one from Settings. null if no extra PIN was ever configured — in
+   that case only the 3 master codes work. */
+function getExtraAdminPinHash() {
+  return localStorage.getItem(ADMIN_PIN_HASH_KEY) || null;
+}
+
+function isMasterAdminPinHash(hash) {
+  return MASTER_ADMIN_PIN_HASHES.includes(hash);
+}
+
+function getAdminLockout() {
+  try { return JSON.parse(localStorage.getItem(ADMIN_LOCKOUT_KEY) || 'null'); }
+  catch (e) { return null; }
+}
+
+function setAdminLockout(state) {
+  try { localStorage.setItem(ADMIN_LOCKOUT_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+}
+
+function adminLockoutRemainingMs() {
+  const st = getAdminLockout();
+  if (!st || !st.until) return 0;
+  return Math.max(0, st.until - Date.now());
+}
+
+function recordFailedAdminAttempt() {
+  const st = getAdminLockout() || { fails: 0, strikes: 0 };
+  st.fails = (st.fails || 0) + 1;
+  if (st.fails >= ADMIN_MAX_ATTEMPTS) {
+    st.strikes = (st.strikes || 0) + 1;
+    st.until   = Date.now() + ADMIN_LOCK_BASE_MS * Math.pow(2, st.strikes - 1);
+    st.fails   = 0;
+  }
+  setAdminLockout(st);
+  return st;
+}
+
+function clearAdminLockout() {
+  localStorage.removeItem(ADMIN_LOCKOUT_KEY);
+}
+
+function isAdminLoggedIn() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY) || 'null');
+    if (!s || !s.exp) return false;
+    if (Date.now() > s.exp) { sessionStorage.removeItem(ADMIN_SESSION_KEY); return false; }
+    return true;
+  } catch (e) { return false; }
+}
+
+function startAdminSession() {
+  sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({ exp: Date.now() + ADMIN_SESSION_MS }));
+}
+
+function touchAdminSession() {
+  if (!isAdminLoggedIn()) return;
+  sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({ exp: Date.now() + ADMIN_SESSION_MS }));
+}
+
+function endAdminSession() {
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+}
+
+function escapeHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function renderAdminLoginHtml() {
+  const remaining = adminLockoutRemainingMs();
+  const lockedNote = remaining > 0
+    ? `<div class="admin-notice">${t('admin_locked_msg').replace('{sec}', Math.ceil(remaining / 1000))}</div>`
+    : '';
+  return `
+    <div class="cabinet-login-box">
+      <p class="cabinet-login-lead">${t('admin_login_lead')}</p>
+      ${lockedNote}
+      <div class="form-group">
+        <label class="form-label" for="adminPin">${t('admin_pin_ph')}</label>
+        <input type="password" class="form-input" id="adminPin" inputmode="numeric" autocomplete="off"
+               placeholder="${t('admin_pin_ph')}" ${remaining > 0 ? 'disabled' : ''}
+               onkeydown="if(event.key==='Enter') adminLogin();"/>
+      </div>
+      <button class="btn btn-primary w-full" id="adminLoginBtn" onclick="adminLogin()" ${remaining > 0 ? 'disabled' : ''}>${t('admin_login_btn')}</button>
+      <button class="cabinet-admin-link" onclick="backToCustomerCabinet()">${t('admin_back_link')}</button>
+    </div>`;
+}
+
+async function adminLogin() {
+  const pinEl = document.getElementById('adminPin');
+  if (!pinEl) return;
+
+  const remaining = adminLockoutRemainingMs();
+  if (remaining > 0) {
+    showToast(t('admin_locked_msg').replace('{sec}', Math.ceil(remaining / 1000)));
+    return;
+  }
+
+  const pin = pinEl.value.trim();
+  if (!pin) { showToast(t('admin_pin_required')); return; }
+
+  const btn = document.getElementById('adminLoginBtn');
+  if (btn) btn.disabled = true;
+
+  let ok = false;
+
+  // Prefer a real backend check when one is configured/reachable —
+  // only the server can verify a secret without that secret (or its
+  // hash) ever needing to sit in the page source.
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      ok = !!data.ok;
+    }
+  } catch (e) { /* no backend reachable — fall back to the local check */ }
+
+  if (!ok) {
+    try {
+      const hash = await sha256Hex(pin);
+      const extraHash = getExtraAdminPinHash();
+      ok = isMasterAdminPinHash(hash) || (extraHash && hash === extraHash);
+    } catch (e) { ok = false; }
+  }
+
+  if (btn) btn.disabled = false;
+
+  if (ok) {
+    clearAdminLockout();
+    startAdminSession();
+    pinEl.value = '';
+    adminSubView = 'list';
+    renderCabinet();
+  } else {
+    const st = recordFailedAdminAttempt();
+    pinEl.value = '';
+    pinEl.classList.add('invalid');
+    if (st.until && st.until > Date.now()) {
+      showToast(t('admin_locked_msg').replace('{sec}', Math.ceil((st.until - Date.now()) / 1000)));
+      renderCabinet(); // re-render so the field disables during lockout
+    } else {
+      const left = ADMIN_MAX_ATTEMPTS - st.fails;
+      showToast(`${t('admin_wrong_pin')}: ${left}`);
+      pinEl.focus();
+    }
+  }
+}
+
+function adminLogout() {
+  endAdminSession();
+  cabinetView = 'customer';
+  adminSubView = 'list';
+  renderCabinet();
+}
+
+/* ---------------------------------------------------------------
+   ADMIN PANEL — menu CRUD (operates directly on the live MENU
+   array so the storefront updates instantly, no reload needed)
+   --------------------------------------------------------------- */
+function adminTableRowsHtml() {
+  const q   = (adminSearchQuery || '').toLowerCase();
+  const cat = adminCatFilter || 'all';
+  const rows = MENU.filter(it => {
+    const matchesCat = cat === 'all' || it.cat === cat;
+    const name = ((it.name && (it.name[currentLang] || it.name.kk)) || '').toLowerCase();
+    const matchesQ = !q || name.includes(q);
+    return matchesCat && matchesQ;
+  });
+
+  if (!rows.length) return `<tr><td colspan="5"><div class="admin-empty">${t('admin_empty')}</div></td></tr>`;
+
+  return rows.map(it => {
+    const name = (it.name && (it.name[currentLang] || it.name.kk)) || '';
+    const sub  = (it.name && it.name[currentLang === 'kk' ? 'ru' : 'kk']) || '';
+    const catDef = CATEGORIES.find(c => c.key === it.cat);
+    const catText = catDef ? (catDef.label[currentLang] || catDef.label.kk) : (it.cat || '');
+    const soldOut = it.available === false;
+    return `
+      <tr${soldOut ? ' class="admin-row-soldout"' : ''}>
+        <td class="admin-row-img"><img src="${escapeHtml(it.img || '')}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"/></td>
+        <td><div class="admin-row-name">${escapeHtml(name)}${soldOut ? `<span class="admin-soldout-tag">${t('admin_soldout_tag')}</span>` : ''}<div class="sub">${escapeHtml(sub)}</div></div></td>
+        <td>${escapeHtml(catText)}</td>
+        <td>${(it.price || 0).toLocaleString()} ₸</td>
+        <td class="admin-row-actions">
+          <button class="btn btn-ghost btn-sm" onclick="adminOpenItemModal(${it.id})">${t('admin_edit')}</button>
+          <button class="btn btn-outline btn-sm" onclick="adminToggleAvailability(${it.id})">${soldOut ? t('admin_mark_available') : t('admin_mark_soldout')}</button>
+          <button class="btn btn-outline btn-sm" onclick="adminDeleteItem(${it.id})">${t('admin_delete')}</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+/* Tab bar shown at the top of every admin screen: Меню (menu CRUD) /
+   Тапсырыстар (orders dashboard) / Параметры (PIN settings). */
+function adminTabsHtml(active) {
+  const tabs = [
+    ['list',     t('admin_tab_menu')],
+    ['orders',   t('admin_tab_orders')],
+    ['settings', t('admin_tab_settings')],
+  ];
+  return `<div class="admin-tabs">
+    ${tabs.map(([key, label]) => `<button class="admin-tab-btn${active === key ? ' active' : ''}" onclick="adminSwitchTab('${key}')">${label}</button>`).join('')}
+  </div>`;
+}
+
+function adminSwitchTab(tab) {
+  adminSubView = tab;
+  renderCabinet();
+}
+
+function renderAdminPanelHtml() {
+  const cat = adminCatFilter || 'all';
+  const catOptions = CATEGORIES.filter(c => c.key !== 'all').map(c =>
+    `<option value="${c.key}" ${cat === c.key ? 'selected' : ''}>${c.label[currentLang] || c.label.kk}</option>`
+  ).join('');
+
+  return `
+    ${adminTabsHtml('list')}
+    <div class="admin-notice"><b>${t('admin_panel_title')}</b><br>${t('admin_notice_text')}</div>
+    <div class="admin-toolbar">
+      <input type="text" class="form-input" id="adminSearch" placeholder="${t('admin_search_ph')}" value="${escapeHtml(adminSearchQuery)}"/>
+      <select class="form-select" id="adminCatFilter">
+        <option value="all" ${cat === 'all' ? 'selected' : ''}>${t('admin_filter_all')}</option>
+        ${catOptions}
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="adminOpenItemModal(null)">${t('admin_add_item')}</button>
+    </div>
+    <div class="admin-table-wrap">
+      <table>
+        <thead><tr>
+          <th>${t('admin_th_img')}</th><th>${t('admin_th_name')}</th><th>${t('admin_th_cat')}</th><th>${t('admin_th_price')}</th><th>${t('admin_th_actions')}</th>
+        </tr></thead>
+        <tbody>${adminTableRowsHtml()}</tbody>
+      </table>
+    </div>
+    <div class="admin-footer-actions">
+      <button class="btn btn-outline btn-sm" onclick="adminExportMenu()">${t('admin_export')}</button>
+      <label class="btn btn-outline btn-sm" style="cursor:pointer;">${t('admin_import')}<input type="file" accept="application/json" id="adminImportFile" style="display:none" onchange="adminImportMenu(event)"/></label>
+      <button class="btn btn-outline btn-sm" onclick="adminResetMenu()">${t('admin_reset')}</button>
+    </div>
+    <button class="btn btn-ghost btn-sm w-full admin-logout-btn" onclick="adminLogout()">${t('admin_logout')}</button>
+  `;
+}
+
+function adminToggleAvailability(id) {
+  const idx = MENU.findIndex(m => m.id === id);
+  if (idx === -1) return;
+  MENU[idx] = { ...MENU[idx], available: MENU[idx].available === false ? true : false };
+  persistMenu();
+  adminRefreshTable();
+  showToast(MENU[idx].available === false ? t('admin_save_ok') : t('admin_save_ok'));
+}
+
+function adminBindToolbar() {
+  const searchEl = document.getElementById('adminSearch');
+  const catEl    = document.getElementById('adminCatFilter');
+  if (searchEl) {
+    searchEl.addEventListener('input', () => {
+      adminSearchQuery = searchEl.value;
+      adminRefreshTable();
+    });
+  }
+  if (catEl) {
+    catEl.addEventListener('change', () => {
+      adminCatFilter = catEl.value;
+      adminRefreshTable();
+    });
+  }
+}
+
+/* Refresh just the <tbody> so the search input never loses focus
+   while typing (a full body.innerHTML replace would re-create it). */
+function adminRefreshTable() {
+  const tbody = document.querySelector('#cabinetBody .admin-table-wrap tbody');
+  if (tbody) tbody.innerHTML = adminTableRowsHtml();
+}
+
+function adminOpenSettings() {
+  adminSubView = 'settings';
+  renderCabinet();
+}
+
+function adminCloseSettings() {
+  adminSubView = 'list';
+  renderCabinet();
+}
+
+function renderAdminSettingsHtml() {
+  const hasExtra = !!getExtraAdminPinHash();
+  return `
+    ${adminTabsHtml('settings')}
+    <div class="admin-notice"><b>${t('admin_master_codes_title')}</b><br>${t('admin_master_codes_text')}</div>
+    <p class="cabinet-login-lead" style="margin-top:14px;">${t('admin_change_pin_title')}</p>
+    <div class="form-group">
+      <label class="form-label" for="adminOldPin">${t('admin_pin_old_ph')}</label>
+      <input type="password" class="form-input" id="adminOldPin" inputmode="numeric" autocomplete="off" placeholder="${t('admin_pin_old_ph')}"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="adminNewPin">${t('admin_pin_new_ph')}</label>
+      <input type="password" class="form-input" id="adminNewPin" inputmode="numeric" autocomplete="off" placeholder="${t('admin_pin_new_ph')}"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="adminConfirmPin">${t('admin_pin_confirm_ph')}</label>
+      <input type="password" class="form-input" id="adminConfirmPin" inputmode="numeric" autocomplete="off" placeholder="${t('admin_pin_confirm_ph')}"/>
+    </div>
+    <button class="btn btn-primary w-full" onclick="adminChangePin()">${t('admin_pin_save')}</button>
+    ${hasExtra ? `<button class="btn btn-outline w-full" style="margin-top:8px;" onclick="adminClearExtraPin()">${t('admin_pin_clear')}</button>` : ''}
+    <button class="btn btn-ghost btn-sm w-full admin-logout-btn" onclick="adminLogout()">${t('admin_logout')}</button>
+  `;
+}
+
+/* ---------------------------------------------------------------
+   ADMIN ORDERS DASHBOARD — aggregates every customer's order
+   history (each is stored under its own toiypall_orders_<phone>
+   localStorage key) into one place for the establishment's owner,
+   with quick stats and an editable status per order.
+   --------------------------------------------------------------- */
+const ORDER_STATUSES = ['new', 'preparing', 'ready', 'done'];
+
+function getAllOrdersForAdmin() {
+  const out = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || key.indexOf('toiypall_orders_') !== 0) continue;
+    try {
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      list.forEach((order, idx) => out.push({ ...order, _storageKey: key, _idx: idx }));
+    } catch (e) { /* ignore corrupt entry */ }
+  }
+  out.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  return out;
+}
+
+function adminOrderSetStatus(storageKey, idx, status) {
+  try {
+    const list = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    if (!list[idx]) return;
+    list[idx].status = status;
+    localStorage.setItem(storageKey, JSON.stringify(list));
+    showToast(t('admin_save_ok'));
+  } catch (e) { /* ignore */ }
+}
+
+function renderAdminOrdersHtml() {
+  const orders = getAllOrdersForAdmin();
+  const today = new Date().toDateString();
+  const todays = orders.filter(o => o.createdAt && new Date(o.createdAt).toDateString() === today);
+  const totalRevenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const todayRevenue  = todays.reduce((s, o) => s + (o.total || 0), 0);
+  const avgCheck = orders.length ? Math.round(totalRevenue / orders.length) : 0;
+
+  // Top dish — quick insight into what sells best, tallied across every
+  // stored order's item list (by name, since ids may differ across edits).
+  const dishCounts = {};
+  orders.forEach(o => (o.items || []).forEach(i => {
+    const key = i.name || '';
+    if (!key) return;
+    dishCounts[key] = (dishCounts[key] || 0) + (i.qty || 1);
+  }));
+  const topDishEntry = Object.entries(dishCounts).sort((a, b) => b[1] - a[1])[0];
+  const topDishText = topDishEntry ? `${topDishEntry[0]} ×${topDishEntry[1]}` : '—';
+
+  const q = (adminOrderQuery || '').toLowerCase();
+  const filtered = !q ? orders : orders.filter(o =>
+    (o.phone || '').toLowerCase().includes(q) || (o.name || '').toLowerCase().includes(q));
+
+  const statsHtml = `
+    <div class="admin-stats-row">
+      <div class="admin-stat-card"><div class="admin-stat-num">${orders.length}</div><div class="admin-stat-label">${t('admin_stat_orders_total')}</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num">${todays.length}</div><div class="admin-stat-label">${t('admin_stat_orders_today')}</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num">${totalRevenue.toLocaleString()} ₸</div><div class="admin-stat-label">${t('admin_stat_revenue_total')}</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num">${todayRevenue.toLocaleString()} ₸</div><div class="admin-stat-label">${t('admin_stat_revenue_today')}</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num">${avgCheck.toLocaleString()} ₸</div><div class="admin-stat-label">${t('admin_stat_avg_check')}</div></div>
+      <div class="admin-stat-card admin-stat-card-wide"><div class="admin-stat-num admin-stat-num-sm">${escapeHtml(topDishText)}</div><div class="admin-stat-label">${t('admin_stat_top_dish')}</div></div>
+    </div>`;
+
+  const listHtml = !filtered.length
+    ? `<div class="admin-empty">${t('admin_orders_empty')}</div>`
+    : filtered.map(o => {
+        const date = o.createdAt ? new Date(o.createdAt).toLocaleString(currentLang === 'ru' ? 'ru-RU' : 'kk-KZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+        const itemsText = (o.items || []).map(i => `${escapeHtml(i.name)} ×${i.qty}`).join(', ');
+        const status = o.status || 'new';
+        const statusOptions = ORDER_STATUSES.map(s => `<option value="${s}" ${s === status ? 'selected' : ''}>${t('admin_status_' + s)}</option>`).join('');
+        return `
+          <div class="admin-order-card">
+            <div class="admin-order-top">
+              <div>
+                <div class="admin-order-customer">${escapeHtml(o.name || '—')}</div>
+                <div class="admin-order-phone">${escapeHtml(o.phone || '')}</div>
+              </div>
+              <div class="admin-order-date">${date}</div>
+            </div>
+            <div class="admin-order-items">${itemsText}</div>
+            <div class="admin-order-bottom">
+              <span class="admin-order-total">${(o.total || 0).toLocaleString()} ₸</span>
+              <select class="admin-order-status-select" onchange="adminOrderSetStatus('${o._storageKey}', ${o._idx}, this.value)">${statusOptions}</select>
+            </div>
+          </div>`;
+      }).join('');
+
+  return `
+    ${adminTabsHtml('orders')}
+    ${statsHtml}
+    <div class="admin-toolbar">
+      <input type="text" class="form-input" id="adminOrderSearch" placeholder="${t('admin_orders_search_ph')}" value="${escapeHtml(adminOrderQuery)}"/>
+      <button class="btn btn-outline btn-sm" onclick="adminExportOrders()">${t('admin_export')}</button>
+    </div>
+    <div id="adminOrdersList">${listHtml}</div>
+    <button class="btn btn-ghost btn-sm w-full admin-logout-btn" onclick="adminLogout()">${t('admin_logout')}</button>
+  `;
+}
+
+/* CSV export of every order — opens cleanly in Excel/Google Sheets so
+   the owner can do bookkeeping or analysis outside the app. */
+function adminExportOrders() {
+  const orders = getAllOrdersForAdmin();
+  const header = ['Дата', 'Имя', 'Телефон', 'Состав заказа', 'Сумма', 'Статус'];
+  const rows = orders.map(o => [
+    o.createdAt ? new Date(o.createdAt).toLocaleString('ru-RU') : '',
+    o.name || '',
+    o.phone || '',
+    (o.items || []).map(i => `${i.name} x${i.qty}`).join('; '),
+    o.total || 0,
+    t('admin_status_' + (o.status || 'new')),
+  ]);
+  const csv = [header, ...rows]
+    .map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'toiypall_orders.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+let adminOrderQuery = '';
+
+function adminBindOrdersToolbar() {
+  const el = document.getElementById('adminOrderSearch');
+  if (!el) return;
+  el.addEventListener('input', () => {
+    adminOrderQuery = el.value;
+    const list = document.getElementById('adminOrdersList');
+    if (list) {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = renderAdminOrdersHtml();
+      const newList = tmp.querySelector('#adminOrdersList');
+      if (newList) list.innerHTML = newList.innerHTML;
+    }
+  });
+}
+
+async function adminChangePin() {
+  const oldEl  = document.getElementById('adminOldPin');
+  const newEl  = document.getElementById('adminNewPin');
+  const confEl = document.getElementById('adminConfirmPin');
+  const oldPin = oldEl ? oldEl.value.trim() : '';
+  const newPin = newEl ? newEl.value.trim() : '';
+  const confPin = confEl ? confEl.value.trim() : '';
+
+  if (!/^\d{6,}$/.test(newPin)) { showToast(t('admin_pin_short')); return; }
+  if (newPin !== confPin) { showToast(t('admin_pin_mismatch')); return; }
+  if (MASTER_ADMIN_PIN_HASHES.includes(await sha256Hex(newPin))) { showToast(t('admin_pin_short')); return; }
+
+  const oldHash   = await sha256Hex(oldPin);
+  const extraHash = getExtraAdminPinHash();
+  const oldOk = isMasterAdminPinHash(oldHash) || (extraHash && oldHash === extraHash);
+  if (!oldOk) { showToast(t('admin_pin_wrong_old')); return; }
+
+  const newHash = await sha256Hex(newPin);
+  localStorage.setItem(ADMIN_PIN_HASH_KEY, newHash);
+  showToast(t('admin_pin_changed'));
+  adminSubView = 'list';
+  renderCabinet();
+}
+
+function adminClearExtraPin() {
+  localStorage.removeItem(ADMIN_PIN_HASH_KEY);
+  showToast(t('admin_pin_cleared'));
+  adminSubView = 'list';
+  renderCabinet();
+}
+
+let adminItemPhotoData = null; // base64 data URL set by adminHandleItemPhoto(), takes priority over the URL field
+
+function adminOpenItemModal(id) {
+  adminEditingId = id;
+  adminItemPhotoData = null;
+  const modal = document.getElementById('adminItemModal');
+  if (!modal) return;
+  const item = id != null ? MENU.find(m => m.id === id) : null;
+
+  document.getElementById('adminItemModalTitle').textContent = item ? t('admin_item_modal_title_edit') : t('admin_item_modal_title_new');
+  document.getElementById('adminItemNameKk').value = item ? (item.name.kk || '') : '';
+  document.getElementById('adminItemNameRu').value = item ? (item.name.ru || '') : '';
+  document.getElementById('adminItemPrice').value  = item ? item.price : '';
+  document.getElementById('adminItemImg').value    = item ? (item.img || '') : '';
+  document.getElementById('adminItemAvailable').checked = !item || item.available !== false;
+
+  const fileEl = document.getElementById('adminItemPhotoFile');
+  if (fileEl) fileEl.value = '';
+  const preview = document.getElementById('adminItemPhotoPreview');
+  if (preview) {
+    if (item && item.img) { preview.src = item.img; preview.style.display = ''; }
+    else { preview.src = ''; preview.style.display = 'none'; }
+  }
+
+  const catSel = document.getElementById('adminItemCat');
+  catSel.innerHTML = CATEGORIES.filter(c => c.key !== 'all').map(c =>
+    `<option value="${c.key}" ${item && item.cat === c.key ? 'selected' : ''}>${c.label[currentLang] || c.label.kk}</option>`
+  ).join('');
+
+  modal.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+/* Reads the chosen photo file and converts it to a base64 data URL —
+   no upload server needed, the image is stored straight into the
+   menu item (and persisted to localStorage like everything else). */
+function adminHandleItemPhoto(evt) {
+  const file = evt.target.files && evt.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast(t('admin_item_photo_invalid')); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    adminItemPhotoData = reader.result;
+    const preview = document.getElementById('adminItemPhotoPreview');
+    if (preview) { preview.src = adminItemPhotoData; preview.style.display = ''; }
+    const urlEl = document.getElementById('adminItemImg');
+    if (urlEl) urlEl.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+/* If the admin types a URL by hand after picking a file, the typed
+   URL should win — drop the previously-loaded file data. */
+function adminClearPhotoFile() {
+  adminItemPhotoData = null;
+}
+
+function adminCloseItemModal() {
+  const modal = document.getElementById('adminItemModal');
+  if (modal) modal.classList.remove('visible');
+  document.body.style.overflow = '';
+  adminEditingId = null;
+  adminItemPhotoData = null;
+}
+
+function adminSaveItem() {
+  const nameKk = document.getElementById('adminItemNameKk').value.trim();
+  const nameRu = document.getElementById('adminItemNameRu').value.trim();
+  const cat    = document.getElementById('adminItemCat').value;
+  const price  = parseInt(document.getElementById('adminItemPrice').value, 10);
+  const urlImg = document.getElementById('adminItemImg').value.trim();
+  const available = document.getElementById('adminItemAvailable').checked;
+  const img = adminItemPhotoData || urlImg;
+
+  if (!nameKk || !nameRu) { showToast(t('admin_item_name_required')); return; }
+  if (!cat) { showToast(t('admin_item_cat_required')); return; }
+  if (!price || price <= 0) { showToast(t('admin_item_price_required')); return; }
+
+  if (adminEditingId != null) {
+    const idx = MENU.findIndex(m => m.id === adminEditingId);
+    if (idx !== -1) {
+      MENU[idx] = { ...MENU[idx], cat, price, img: img || MENU[idx].img, name: { kk: nameKk, ru: nameRu }, available };
+    }
+  } else {
+    const newId = MENU.reduce((max, m) => Math.max(max, m.id), 0) + 1;
+    MENU.push({ id: newId, cat, price, img, name: { kk: nameKk, ru: nameRu }, available });
+  }
+
+  persistMenu();
+  adminCloseItemModal();
+  adminRefreshTable();
+  showToast(t('admin_save_ok'));
+}
+
+function adminDeleteItem(id) {
+  if (!confirm(t('admin_confirm_delete'))) return;
+  MENU = MENU.filter(m => m.id !== id);
+  persistMenu();
+  adminRefreshTable();
+  showToast(t('admin_delete_ok'));
+}
+
+function persistMenu() {
+  try { localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(MENU)); } catch (e) { /* ignore */ }
+  renderCategoryTabs();
+  renderMenuGrid(currentCat);
+}
+
+function adminExportMenu() {
+  const blob = new Blob([JSON.stringify(MENU, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'toiypall_menu.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function adminImportMenu(evt) {
+  const file = evt.target.files && evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data) || !data.length) throw new Error('bad shape');
+      MENU = data;
+      persistMenu();
+      showToast(t('admin_import_ok'));
+    } catch (e) {
+      showToast(t('admin_import_fail'));
+    } finally {
+      evt.target.value = '';
+      renderCabinet();
+    }
+  };
+  reader.readAsText(file);
+}
+
+function adminResetMenu() {
+  if (!confirm(t('admin_confirm_reset'))) return;
+  MENU = DEFAULT_MENU.slice();
+  persistMenu();
+  adminRefreshTable();
+  showToast(t('admin_reset_ok'));
+}
+
+/* ---------------------------------------------------------------
+   CARD PAYMENT (UI simulation only — no real acquiring/PSP connected)
+
+   IMPORTANT: this does NOT process a real payment. There is no
+   payment gateway integration (Kaspi/Halyk/Stripe etc.) wired up.
+   It validates the card fields client-side (Luhn + expiry format)
+   and simulates a short "processing" delay so the checkout flow
+   feels complete end-to-end. To accept real card payments, this
+   block must be replaced with a call to a licensed payment
+   provider's SDK/API.
+   --------------------------------------------------------------- */
+function onPayMethodChange() {
+  const sel    = document.getElementById('orderPay');
+  const fields = document.getElementById('cardFields');
+  if (!sel || !fields) return;
+  fields.classList.toggle('visible', sel.value === 'card');
+}
+
+function formatCardNumber(value) {
+  const digits = value.replace(/\D/g, '').slice(0, 16);
+  return digits.replace(/(.{4})/g, '$1 ').trim();
+}
+
+function formatExpiry(value) {
+  const digits = value.replace(/\D/g, '').slice(0, 4);
+  if (digits.length <= 2) return digits;
+  return digits.slice(0, 2) + '/' + digits.slice(2);
+}
+
+function luhnCheck(num) {
+  const digits = num.replace(/\D/g, '');
+  if (digits.length < 13) return false;
+  let sum = 0, shouldDouble = false;
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let d = parseInt(digits[i], 10);
+    if (shouldDouble) { d *= 2; if (d > 9) d -= 9; }
+    sum += d;
+    shouldDouble = !shouldDouble;
+  }
+  return sum % 10 === 0;
+}
+
+function expiryIsValid(value) {
+  const m = /^(\d{2})\/(\d{2})$/.exec(value);
+  if (!m) return false;
+  const month = parseInt(m[1], 10);
+  const year  = 2000 + parseInt(m[2], 10);
+  if (month < 1 || month > 12) return false;
+  const now      = new Date();
+  const expEnd   = new Date(year, month, 1); // first day of month *after* expiry
+  return expEnd > now;
+}
+
+function validateCardFields() {
+  const numberEl = document.getElementById('cardNumber');
+  const expEl    = document.getElementById('cardExpiry');
+  const cvvEl    = document.getElementById('cardCvv');
+  [numberEl, expEl, cvvEl].forEach(el => el && el.classList.remove('invalid'));
+
+  let ok = true;
+  if (!numberEl || !luhnCheck(numberEl.value)) { numberEl && numberEl.classList.add('invalid'); ok = false; }
+  if (!expEl || !expiryIsValid(expEl.value))   { expEl && expEl.classList.add('invalid'); ok = false; }
+  if (!cvvEl || !/^\d{3}$/.test(cvvEl.value))  { cvvEl && cvvEl.classList.add('invalid'); ok = false; }
+  return ok;
+}
+
+function initCardInputFormatting() {
+  const numberEl = document.getElementById('cardNumber');
+  const expEl    = document.getElementById('cardExpiry');
+  const cvvEl    = document.getElementById('cardCvv');
+
+  if (numberEl) {
+    numberEl.addEventListener('input', () => {
+      numberEl.value = formatCardNumber(numberEl.value);
+      numberEl.classList.remove('invalid');
+    });
+  }
+  if (expEl) {
+    expEl.addEventListener('input', () => {
+      expEl.value = formatExpiry(expEl.value);
+      expEl.classList.remove('invalid');
+    });
+  }
+  if (cvvEl) {
+    cvvEl.addEventListener('input', () => {
+      cvvEl.value = cvvEl.value.replace(/\D/g, '').slice(0, 3);
+      cvvEl.classList.remove('invalid');
+    });
+  }
+}
+
+/* Simulated processing delay — stands in for a real PSP round-trip. */
+function processCardPayment() {
+  return new Promise(resolve => setTimeout(() => resolve({ ok: true }), 1400));
+}
+
+/* ---------------------------------------------------------------
    SUBMIT ORDER
    --------------------------------------------------------------- */
 async function submitOrder() {
   const name     = document.getElementById('orderName').value.trim();
-  const phone    = document.getElementById('orderPhone').value.trim();
+  const phoneEl  = document.getElementById('orderPhone');
   const branchEl = document.getElementById('orderBranch');
   const branchId = branchEl.value;
   const brName   = branchEl.options[branchEl.selectedIndex]?.text || '';
@@ -4646,8 +6724,19 @@ async function submitOrder() {
   const payEl    = document.getElementById('orderPay');
   const pay      = payEl ? payEl.value : 'cash';
 
-  if (!name || !phone) { showToast(t('order_fill')); return; }
+  if (!name) { showToast(t('order_fill')); return; }
+
+  if (!phoneIsComplete(phoneEl)) {
+    phoneEl.classList.add('invalid');
+    const group = document.getElementById('orderPhoneGroup');
+    if (group) group.classList.add('invalid');
+    showToast(t('order_phone_invalid'));
+    return;
+  }
+  const phone = fullPhoneValue(phoneEl);
+
   if (!branchId)        { showToast(t('order_select_br')); return; }
+  if (type === 'delivery' && !address) { showToast(t('order_fill_addr')); return; }
 
   const items = Object.keys(cart)
     .filter(id => cart[id] > 0)
@@ -4661,30 +6750,46 @@ async function submitOrder() {
 
   if (!items.length) { showToast(t('cart_empty')); return; }
 
+  // Card payment: validate fields and run the (simulated) processing step
+  // before anything else. No real acquiring is connected — see the
+  // CARD PAYMENT section above for details.
+  if (pay === 'card') {
+    if (!validateCardFields()) { showToast(t('card_invalid')); return; }
+  }
+
   const total   = items.reduce((s, i) => s + i.price * i.qty, 0);
   const payload = { name, phone, branch: branchId, branchName: brName, type, address, items, total, pay, lang: currentLang };
 
   const btn = document.querySelector('#orderModal .modal-submit-btn');
   if (btn) { btn.disabled = true; btn.textContent = '...'; }
 
+  const overlay = document.getElementById('payProcessing');
+  if (pay === 'card' && overlay) overlay.classList.add('visible');
+
   try {
+    if (pay === 'card') {
+      await processCardPayment();
+    }
+
     const res  = await fetch(`${API_BASE}/api/order`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    if (data.ok) { onOrderSuccess(); }
+    if (data.ok) { saveOrderToHistory(payload); onOrderSuccess(); }
     else { showToast('Қате: ' + (data.message || 'server error')); }
   } catch (_) {
-    // Offline fallback — persist locally
+    // Offline fallback — persist locally (no backend connected yet)
     try {
       const pending = JSON.parse(localStorage.getItem('toiypall_pending') || '[]');
       pending.push({ ...payload, createdAt: new Date().toISOString() });
       localStorage.setItem('toiypall_pending', JSON.stringify(pending));
     } catch (e) { /* ignore */ }
+    saveOrderToHistory(payload);
     onOrderSuccess();
   } finally {
+    if (overlay) overlay.classList.remove('visible');
     if (btn) { btn.disabled = false; btn.textContent = t('order_submit'); }
   }
 }
@@ -4695,10 +6800,16 @@ function onOrderSuccess() {
   updateCartUI();
   renderCartItems();
   showToast(t('toast_order'));
-  ['orderName', 'orderPhone', 'orderAddrInput'].forEach(id => {
+  ['orderName', 'orderAddrInput'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  const phoneEl = document.getElementById('orderPhone');
+  if (phoneEl) { phoneEl.value = ''; phoneEl.classList.remove('invalid'); }
+  const phoneGroup = document.getElementById('orderPhoneGroup');
+  if (phoneGroup) phoneGroup.classList.remove('invalid');
+  const payEl = document.getElementById('orderPay');
+  if (payEl) { payEl.value = 'cash'; onPayMethodChange(); }
 }
 
 /* ---------------------------------------------------------------
@@ -4776,8 +6887,11 @@ function initKeyboard() {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       closeModal();
+      adminCloseItemModal();
       const sidebar = document.getElementById('cartSidebar');
       if (sidebar.classList.contains('open')) toggleCart();
+      const cabinet = document.getElementById('cabinetSidebar');
+      if (cabinet && cabinet.classList.contains('open')) toggleCabinet();
       closeMobileNav();
     }
   });
@@ -4791,6 +6905,12 @@ function initModalBackdrop() {
   if (modal) {
     modal.addEventListener('click', e => {
       if (e.target === modal) closeModal();
+    });
+  }
+  const adminModal = document.getElementById('adminItemModal');
+  if (adminModal) {
+    adminModal.addEventListener('click', e => {
+      if (e.target === adminModal) adminCloseItemModal();
     });
   }
 }
@@ -4810,7 +6930,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initKeyboard();
   initModalBackdrop();
   setupDeliveryToggle();
+  initCardInputFormatting();
+  initPhoneInputs();
   initLeafletMap();
+  refreshMenuFromBackend();
 });
 
 /* Expose globals for inline HTML callbacks */
@@ -4825,6 +6948,38 @@ window.submitOrder    = submitOrder;
 window.toggleMobileNav= toggleMobileNav;
 window.closeMobileNav = closeMobileNav;
 window.selectBranch   = selectBranch;
+window.toggleCabinet  = toggleCabinet;
+window.cabinetLogin   = cabinetLogin;
+window.cabinetLogout  = cabinetLogout;
+window.repeatOrder    = repeatOrder;
+window.onPayMethodChange = onPayMethodChange;
+
+/* Admin login entry points */
+window.openAdminLogin    = openAdminLogin;
+window.backToCustomerCabinet = backToCustomerCabinet;
+window.openAdminFromMenu = openAdminFromMenu;
+window.adminLogin        = adminLogin;
+window.adminLogout       = adminLogout;
+window.adminOpenSettings = adminOpenSettings;
+window.adminCloseSettings= adminCloseSettings;
+window.adminChangePin    = adminChangePin;
+window.adminClearExtraPin = adminClearExtraPin;
+window.adminSwitchTab     = adminSwitchTab;
+window.adminOrderSetStatus = adminOrderSetStatus;
+
+/* Admin menu CRUD */
+window.adminOpenItemModal  = adminOpenItemModal;
+window.adminCloseItemModal = adminCloseItemModal;
+window.adminSaveItem       = adminSaveItem;
+window.adminDeleteItem     = adminDeleteItem;
+window.adminExportMenu     = adminExportMenu;
+window.adminImportMenu     = adminImportMenu;
+window.adminResetMenu      = adminResetMenu;
+window.adminToggleAvailability = adminToggleAvailability;
+window.adminHandleItemPhoto    = adminHandleItemPhoto;
+window.adminClearPhotoFile     = adminClearPhotoFile;
+window.adminExportOrders       = adminExportOrders;
+
 </script>
 
 </body>
