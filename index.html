@@ -3929,7 +3929,7 @@ const MENU = [
     id: 307, cat: 'soups',
     name: { kk: 'Том ям', ru: 'Том ям' },
     price: 3290,
-    img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tom%20Yum%20with%20Clear%20Soup.jpg?width=400',
+    img: 'https://images.rawpixel.com/image_png_social_landscape/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDI0LTAyL3Jhd3BpeGVsX29mZmljZV80M19waG90b19vZl90b21feXVtX2dvb25nX3JlYWxpc3RpY19waG90b2dyYXBoX185ODRiNzAyYi00OWMxLTRmYTQtOGYyOC1mNTViNGMzMWJhNDkucG5n.png',
   },
   {
     id: 308, cat: 'soups',
@@ -4117,7 +4117,6 @@ const BRANCHES = [
     coords: { lat: 43.242449, lon: 76.923901 },
     openHour: 10,
     closeHour: 24,
-    instagram: 'toiyp_all',
   },
 ];
 
@@ -4317,7 +4316,12 @@ function updateCartUI() {
    BRANCHES RENDER
    --------------------------------------------------------------- */
 function isOpen(branch) {
-  const h = new Date().getHours();
+  // Always use Almaty time, regardless of visitor's device timezone
+  const h = parseInt(new Intl.DateTimeFormat('en-GB', {
+    hour: 'numeric',
+    hour12: false,
+    timeZone: 'Asia/Almaty'
+  }).format(new Date()), 10);
   const { openHour, closeHour } = branch;
   if (openHour === 0 && closeHour === 24) return true; // 24/7
   if (openHour < closeHour) return h >= openHour && h < closeHour;
@@ -4403,14 +4407,14 @@ function renderBranches() {
           </svg>
           ${t('branch_call')}
         </a>
-        <a href="https://instagram.com/${b.instagram}" target="_blank" rel="noopener" class="branch-btn branch-btn-ig">
+        ${b.instagram ? `<a href="https://instagram.com/${b.instagram}" target="_blank" rel="noopener" class="branch-btn branch-btn-ig">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
           </svg>
           Instagram
-        </a>
+        </a>` : ''}
       </div>
     </div>`;
   }).join('');
